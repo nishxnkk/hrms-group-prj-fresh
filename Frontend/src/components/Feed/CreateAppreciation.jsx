@@ -100,15 +100,6 @@ const CreateAppreciation = ({ onNavigateBack, onSuccess, externalFormRef }) => {
                         <h1 className="text-xl font-bold text-[#266ECD]">Create New Appreciation</h1>
                         <p className="text-sm text-gray-500 mt-1">Recognize and celebrate your colleagues</p>
                     </div>
-                    <button
-                        onClick={onNavigateBack}
-                        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to Feed
-                    </button>
                 </div>
 
                 {/* Form */}

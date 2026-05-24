@@ -12,10 +12,6 @@ const Feed = () => {
     const [feedRefreshKey, setFeedRefreshKey] = useState(0);
     const createFormRef = useRef(null);
 
-    const navigateToPage2 = () => {
-        setCurrentFeedPage(2);
-    };
-
     const navigateToPage1 = () => {
         setCurrentFeedPage(1);
     };
@@ -30,7 +26,7 @@ const Feed = () => {
 
     return (
         <>
-            {currentFeedPage === 1 && <FeedPage2 key={feedRefreshKey} onNavigateToPage2={navigateToPage2} onNavigateToPage3={navigateToPage3} onNavigateToCreateForm={navigateToCreateForm} />}
+            {currentFeedPage === 1 && <FeedPage2 key={feedRefreshKey} onNavigateToPage3={navigateToPage3} onNavigateToCreateForm={navigateToCreateForm} />}
             {currentFeedPage === 2 && <FeedPage1 onNavigateBack={navigateToPage1} onNavigateToCreateForm={navigateToCreateForm} />}
             {currentFeedPage === 3 && <FeedPage3 onNavigateBack={navigateToPage1} />}
             {showCreateModal && (

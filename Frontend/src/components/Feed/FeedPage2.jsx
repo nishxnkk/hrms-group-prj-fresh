@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { getAllEvents } from '../../services/event.service';
 import Promotion from '../../pages/Promotion';
 
-const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateForm }) => {
+const FeedPage2 = ({ onNavigateToPage3, onNavigateToCreateForm }) => {
     const [appreciations, setAppreciations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -20,14 +20,12 @@ const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateFor
     const [showComments, setShowComments] = useState({});
     const [comments, setComments] = useState({});
     const [meetings, setMeetings] = useState([]);
-    const [isAdmin, setIsAdmin] = useState(false);
     const [userPoints, setUserPoints] = useState(0);
 
     useEffect(() => {
         const userStr = localStorage.getItem("user");
         if (userStr) {
             const user = JSON.parse(userStr);
-            setIsAdmin(user.role === 'Admin');
         }
         fetchAppreciations();
         fetchMeetings();
@@ -303,14 +301,6 @@ const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateFor
                         {!loading && !error && appreciations.length === 0 && (
                             <div className="bg-white dark:bg-[#1F2429] rounded-2xl shadow-md p-12 text-center">
                                 <p className="text-gray-500 dark:text-gray-400 text-lg">No appreciations yet. Be the first to create one!</p>
-                                {isAdmin && (
-                                    <button
-                                        onClick={onNavigateToCreateForm}
-                                        className="mt-4 bg-[#266ECD] text-white px-6 py-2 rounded-lg font-semibold hover:bg-opacity-90"
-                                    >
-                                        Create Appreciation
-                                    </button>
-                                )}
                             </div>
                         )}
 
@@ -481,12 +471,6 @@ const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateFor
                                 </div>
                             </div>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Reward points balance</p>
-                            <button
-                                onClick={onNavigateToPage2}
-                                className="w-full bg-[#266ECD] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg"
-                            >
-                                Attempt
-                            </button>
                         </div>
 
                         {/* Don't Miss Out! Upcoming Training Session */}
@@ -515,9 +499,6 @@ const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateFor
                                 <p className="text-sm text-gray-500 mb-5">No upcoming meetings</p>
                             )}
 
-                            <button className="w-full bg-[#266ECD] text-white px-6 py-2.5 rounded-xl font-bold">
-                                Register
-                            </button>
                         </div>
 
                         {/* Upcoming Events (dynamic) */}
