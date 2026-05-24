@@ -95,7 +95,7 @@ function Sidebar() {
   }, []);
 
   return (
-    <aside className="app-sidebar fixed left-0 top-0 z-30 h-screen w-64 bg-[linear-gradient(180deg,#6f1d1b_0%,#3a1716_100%)] text-[#fff7f1] shadow-xl shadow-red-950/20">
+    <aside className="app-sidebar fixed left-0 top-0 z-30 h-screen w-64 border-r border-slate-200 bg-white text-slate-700 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100">
 
       <h1 className="app-brand text-2xl font-bold leading-tight tracking-wide">RedNote PayRoll System</h1>
 
@@ -103,11 +103,11 @@ function Sidebar() {
         {avatarSrc ? (
           <img
             src={avatarSrc}
-            className="app-avatar rounded-full object-cover border-2 border-white/20"
+            className="app-avatar rounded-full object-cover border-2 border-slate-200 dark:border-slate-700"
             alt={fullname}
           />
         ) : (
-          <div className="app-avatar rounded-full bg-white/10 flex items-center justify-center text-white/80 border-2 border-white/20">
+          <div className="app-avatar rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border-2 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
             <User size={24} />
           </div>
         )}
@@ -126,8 +126,8 @@ function Sidebar() {
               <Link
                 to={item.path}
                 className={`app-nav-link block rounded-lg font-medium ${isActive
-                  ? "bg-[#fff7f1] text-[#6f1d1b]"
-                  : "text-[#ffe7df] hover:bg-white/12"
+                  ? "bg-slate-100 text-slate-950 dark:bg-slate-800 dark:text-white"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                   }`}
               >
                 {item.name}
@@ -141,8 +141,8 @@ function Sidebar() {
           <Link
             to={tasksLink}
             className={`app-nav-link block rounded-lg font-medium ${tasksActive
-              ? "bg-[#fff7f1] text-[#6f1d1b]"
-              : "text-[#ffe7df] hover:bg-white/12"
+              ? "bg-slate-100 text-slate-950 dark:bg-slate-800 dark:text-white"
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
               }`}
           >
             <div className="flex items-center justify-between">
@@ -156,7 +156,7 @@ function Sidebar() {
                       <span className="text-xs bg-red-600 text-white rounded-full px-2 py-0.5">{taskStats.overdue}</span>
                     )}
                     {taskStats.remaining > 0 && (
-                      <span className="text-xs bg-[#fff7f1] text-[#6f1d1b] rounded-full px-2 py-0.5">{taskStats.remaining}</span>
+                      <span className="text-xs bg-slate-100 text-slate-700 rounded-full px-2 py-0.5 dark:bg-slate-800 dark:text-slate-200">{taskStats.remaining}</span>
                     )}
                   </>
                 )}

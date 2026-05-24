@@ -9,7 +9,7 @@ export const Table = ({ children, className = '' }) => {
 };
 
 export const TableHeader = ({ children }) => {
-    return <thead className="bg-gray-50 text-gray-900 font-semibold border-b border-gray-200">{children}</thead>;
+    return <thead className="bg-[var(--rn-action)] text-white font-semibold border-b border-[var(--rn-action-hover)]">{children}</thead>;
 };
 
 export const TableRow = ({ children, className = '' }) => {
@@ -17,7 +17,7 @@ export const TableRow = ({ children, className = '' }) => {
 };
 
 export const TableHead = ({ children, className = '' }) => {
-    return <th className={`p-4 font-semibold text-gray-700 ${className}`}>{children}</th>;
+    return <th className={`p-4 font-semibold text-white ${className}`}>{children}</th>;
 };
 
 export const TableCell = ({ children, className = '' }) => {

@@ -14,16 +14,16 @@ const Button = ({
 
     const variants = {
   primary:
-    "bg-[var(--rn-primary)] text-white hover:bg-[var(--rn-primary-hover)] focus:ring-[var(--rn-primary)] dark:bg-[var(--rn-primary)] dark:focus:ring-[var(--rn-primary)]",
+    "bg-[var(--rn-action)] text-white hover:bg-[var(--rn-action-hover)] focus:ring-[var(--rn-action)] dark:bg-[var(--rn-action)] dark:focus:ring-[var(--rn-action)]",
 
   secondary:
     "bg-[var(--rn-gold)] text-white hover:bg-[#a86d24] focus:ring-[var(--rn-gold)] dark:bg-[var(--rn-gold)] dark:text-white dark:hover:bg-[#a86d24] dark:focus:ring-[var(--rn-gold)]",
 
   outline:
-    "border border-[var(--rn-border)] bg-transparent text-[var(--rn-primary)] hover:bg-[var(--rn-soft)] focus:ring-[var(--rn-primary)] dark:border-[#7a3a35] dark:text-[#ffd6cc] dark:hover:bg-[#3a1d1b] dark:focus:ring-[var(--rn-primary)]",
+    "border border-[var(--rn-border)] bg-transparent text-[var(--rn-primary)] hover:bg-[var(--rn-soft)] focus:ring-[var(--rn-primary)] dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 dark:focus:ring-[var(--rn-primary)]",
 
   ghost:
-    "bg-transparent text-[var(--rn-muted)] hover:bg-[var(--rn-soft)] hover:text-[var(--rn-ink)] dark:text-[#ffd6cc] dark:hover:bg-[#3a1d1b] dark:hover:text-white",
+    "bg-transparent text-[var(--rn-muted)] hover:bg-[var(--rn-soft)] hover:text-[var(--rn-ink)] dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white",
 
   danger:
     "bg-red-600 text-white hover:bg-red-700 focus:ring-red-600 dark:hover:bg-red-700 dark:focus:ring-red-500",

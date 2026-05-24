@@ -4,17 +4,20 @@
 
 :root {
   font-family: 'Inter', sans-serif;
-  --rn-bg: #fff7f1;
+  --rn-bg: #f8fafc;
   --rn-surface: #ffffff;
-  --rn-soft: #fbe7df;
-  --rn-border: #efc9bd;
-  --rn-primary: #b8322b;
-  --rn-primary-hover: #94231f;
-  --rn-primary-dark: #651b1b;
-  --rn-ink: #2b1b1b;
-  --rn-muted: #7b5f5b;
+  --rn-soft: #eef2f7;
+  --rn-border: #d8dee8;
+  --rn-primary: #374151;
+  --rn-primary-hover: #1f2937;
+  --rn-primary-dark: #111827;
+  --rn-action: #b4443f;
+  --rn-action-hover: #93312d;
+  --rn-ink: #18202f;
+  --rn-muted: #667085;
   --rn-gold: #c88732;
-  --rn-focus: rgba(184, 50, 43, 0.24);
+  --rn-focus: rgba(55, 65, 81, 0.18);
+  --rn-action-focus: rgba(180, 68, 63, 0.24);
 }
 
 body {
@@ -24,8 +27,8 @@ body {
 }
 
 .dark body {
-  background-color: #211313;
-  color: #fff7f1;
+  background-color: #111827;
+  color: #f8fafc;
 }
 
 @keyframes fadeIn {
@@ -87,14 +90,14 @@ button:not(:disabled):hover,
 [role="button"]:hover,
 a[class*="button"]:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(43, 27, 27, 0.12);
+  box-shadow: 0 10px 22px rgba(17, 24, 39, 0.12);
 }
 
 button:not(:disabled):active,
 [role="button"]:active,
 a[class*="button"]:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 4px 10px rgba(43, 27, 27, 0.1);
+  box-shadow: 0 4px 10px rgba(17, 24, 39, 0.1);
 }
 
 .app-shell {
@@ -105,7 +108,7 @@ a[class*="button"]:active {
   padding: 1.5rem;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-color: rgba(255, 247, 241, 0.38) transparent;
+  scrollbar-color: rgba(100, 116, 139, 0.4) transparent;
   scrollbar-width: thin;
 }
 
@@ -118,12 +121,12 @@ a[class*="button"]:active {
 }
 
 .app-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 247, 241, 0.28);
+  background: rgba(100, 116, 139, 0.3);
   border-radius: 9999px;
 }
 
 .app-sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 247, 241, 0.48);
+  background: rgba(100, 116, 139, 0.52);
 }
 
 .app-brand {
@@ -167,7 +170,7 @@ a[class*="button"]:active {
   max-width: 100%;
 }
 
-/* RedNote-inspired application palette */
+/* Neutral application palette */
 .bg-\[\#020839\],
 .bg-\[\#266ECD\],
 .bg-\[\#0066FF\],
@@ -181,6 +184,27 @@ a[class*="button"]:active {
 .hover\:bg-\[\#3a20d1\]:hover,
 .hover\:bg-\[\#3b62c7\]:hover {
   background-color: var(--rn-primary-hover) !important;
+}
+
+button.bg-\[\#020839\],
+button.bg-\[\#266ECD\],
+button.bg-\[\#0066FF\],
+button.bg-\[\#2C50AB\],
+button.bg-\[\#4a2cf0\],
+button.bg-blue-600,
+a.bg-\[\#266ECD\],
+a.bg-\[\#0066FF\],
+a.bg-\[\#2C50AB\] {
+  background-color: var(--rn-action) !important;
+}
+
+button.hover\:bg-blue-700:hover,
+button.hover\:bg-\[\#3a20d1\]:hover,
+button.hover\:bg-\[\#3b62c7\]:hover,
+a.hover\:bg-blue-700:hover,
+a.hover\:bg-\[\#3a20d1\]:hover,
+a.hover\:bg-\[\#3b62c7\]:hover {
+  background-color: var(--rn-action-hover) !important;
 }
 
 .text-\[\#020839\],
@@ -205,6 +229,38 @@ a[class*="button"]:active {
 .focus\:ring-purple-400:focus,
 .focus\:ring-green-500:focus {
   --tw-ring-color: var(--rn-focus) !important;
+}
+
+.app-main thead {
+  background-color: var(--rn-action) !important;
+  color: #ffffff !important;
+}
+
+.app-main thead th {
+  color: #ffffff !important;
+}
+
+.app-main .bg-red-50:not(button):not(a),
+.app-main .bg-red-100:not(button):not(a),
+.app-main .bg-red-200:not(button):not(a),
+.app-main .dark\:bg-red-900\/30:not(button):not(a),
+.app-main .dark\:bg-red-600:not(button):not(a) {
+  background-color: var(--rn-soft) !important;
+}
+
+.app-main .text-red-300:not(button):not(a),
+.app-main .text-red-400:not(button):not(a),
+.app-main .text-red-500:not(button):not(a),
+.app-main .text-red-600:not(button):not(a),
+.app-main .text-red-700:not(button):not(a),
+.app-main .text-red-800:not(button):not(a) {
+  color: var(--rn-muted) !important;
+}
+
+.app-main .border-red-100:not(button):not(a),
+.app-main .border-red-200:not(button):not(a),
+.app-main .border-red-800:not(button):not(a) {
+  border-color: var(--rn-border) !important;
 }
 
 .bg-gray-50 {
@@ -232,13 +288,13 @@ a[class*="button"]:active {
 .dark .dark\:bg-\[\#020839\],
 .dark .dark\:bg-\[\#1F2429\],
 .dark .dark\:bg-\[\#0C1014\] {
-  background-color: #2a1717 !important;
+  background-color: #18202f !important;
 }
 
 .dark .dark\:text-\[\#AACCFF\],
 .dark .dark\:text-\[\#88AAFF\],
 .dark .dark\:text-\[\#4dabf7\] {
-  color: #ffd6cc !important;
+  color: #d8dee8 !important;
 }
 
 @media (max-width: 1180px) {
@@ -286,7 +342,7 @@ a[class*="button"]:active {
     width: 100%;
     height: auto;
     padding: 0.875rem 1rem;
-    border-bottom: 1px solid rgba(255, 247, 241, 0.16);
+    border-bottom: 1px solid rgba(216, 222, 232, 0.9);
   }
 
   .app-main {

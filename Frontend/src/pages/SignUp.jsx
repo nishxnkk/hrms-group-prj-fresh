@@ -33,7 +33,7 @@ const SignUp = () => {
 
   useEffect(() => {
     const previous = document.body.style.backgroundColor;
-    document.body.style.backgroundColor = '#fff7f1';
+    document.body.style.backgroundColor = '#f8fafc';
     return () => {
       document.body.style.backgroundColor = previous;
     };
