@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { X, User, Mail, Lock, Briefcase, Phone, Calendar } from 'lucide-react';
 import { focusFirstInvalid, handleInvalidCapture } from '../../utils/formValidation';
+import GuardedModal from '../ui/GuardedModal';
 
 const AddEmployeeModal = ({ isOpen, onClose, onUserAdded }) => {
     const [formData, setFormData] = useState({
@@ -65,8 +66,11 @@ const AddEmployeeModal = ({ isOpen, onClose, onUserAdded }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <GuardedModal
+            onDiscard={onClose}
+            onSave={() => formRef.current?.requestSubmit()}
+            contentClassName="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        >
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800 sticky top-0 bg-white dark:bg-gray-900 z-10">
@@ -282,8 +286,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onUserAdded }) => {
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
+        </GuardedModal>
     );
 };
 

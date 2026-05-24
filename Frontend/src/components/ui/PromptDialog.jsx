@@ -1,10 +1,20 @@
-import { useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function PromptDialog({ state, onClose }) {
   const [value, setValue] = useState('');
+  useEffect(() => {
+    if (!state.open) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [state.open]);
+
   if (!state.open) return null;
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full mx-4">
         {state.title && <h3 className="text-lg font-semibold text-gray-900 mb-2">{state.title}</h3>}
         <p className="text-gray-600 mb-3">{state.message}</p>

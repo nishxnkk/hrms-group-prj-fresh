@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -6,6 +6,7 @@ import { Table, TableHeader, TableRow, TableHead, TableCell } from "../../compon
 import Skeleton from "../../components/ui/Skeleton";
 import EmptyState from "../../components/ui/EmptyState";
 import { Fragment } from "react";
+import GuardedModal from "../../components/ui/GuardedModal";
 
 export default function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -22,6 +23,7 @@ export default function Jobs() {
   const [applicant, setApplicant] = useState({ name: "", email: "", coverLetter: "" });
   const [resumeFile, setResumeFile] = useState(null);
   const [resumePreview, setResumePreview] = useState(null);
+  const applyFormRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -270,14 +272,17 @@ export default function Jobs() {
 
       {/* Apply Modal */}
       {showApply && selectedJob && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+        <GuardedModal
+          onDiscard={closeApply}
+          onSave={() => applyFormRef.current?.requestSubmit()}
+          contentClassName="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6"
+        >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Apply for {selectedJob.title}</h3>
               <button onClick={closeApply} className="text-gray-500">Close</button>
             </div>
 
-            <form onSubmit={submitApplication} className="space-y-4">
+            <form ref={applyFormRef} onSubmit={submitApplication} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input required placeholder="Full name" value={applicant.name} onChange={(e) => setApplicant({ ...applicant, name: e.target.value })} className="px-3 py-2 border rounded" />
                 <input required placeholder="Email" value={applicant.email} onChange={(e) => setApplicant({ ...applicant, email: e.target.value })} className="px-3 py-2 border rounded" />
@@ -300,8 +305,7 @@ export default function Jobs() {
                 <button type="submit" className="px-4 py-2 bg-[#020839] text-white rounded">Submit Application</button>
               </div>
             </form>
-          </div>
-        </div>
+        </GuardedModal>
       )}
     </div>
   );

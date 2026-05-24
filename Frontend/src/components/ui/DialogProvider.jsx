@@ -56,6 +56,16 @@ export default function DialogProvider({ children }) {
     setDialog(null);
   };
 
+  useEffect(() => {
+    if (!dialog) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [dialog]);
+
   const title =
     dialog?.title ||
     (dialog?.type === "confirm" ? "Please Confirm" : dialog?.type === "prompt" ? "Input Required" : "Notice");
@@ -64,7 +74,7 @@ export default function DialogProvider({ children }) {
     <>
       {children}
       {dialog && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/45 px-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/45 px-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-xl dark:bg-slate-900">
             <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600 dark:text-slate-300">

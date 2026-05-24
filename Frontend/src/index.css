@@ -71,6 +71,32 @@ body {
   animation: fadeIn 0.4s ease-out;
 }
 
+button,
+[role="button"],
+a[class*="button"] {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+button:not(:disabled):hover,
+[role="button"]:hover,
+a[class*="button"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(43, 27, 27, 0.12);
+}
+
+button:not(:disabled):active,
+[role="button"]:active,
+a[class*="button"]:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 4px 10px rgba(43, 27, 27, 0.1);
+}
+
 .app-shell {
   display: flex;
 }

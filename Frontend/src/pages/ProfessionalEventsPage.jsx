@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { getAllEvents, createEvent as createEventAPI, registerForEvent, deleteEvent as deleteEventAPI, getUserEvents } from '../services/event.service';
+import GuardedModal from '../components/ui/GuardedModal';
 
 const ProfessionalEventsPage = () => {
   // --- 1. STATE DEFINITIONS (Moved INSIDE the component) ---
@@ -10,6 +11,8 @@ const ProfessionalEventsPage = () => {
   const [joinedEvents, setJoinedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const joinFormRef = useRef(null);
+  const createEventFormRef = useRef(null);
 
   // Join Form State
   const [joinForm, setJoinForm] = useState({
@@ -219,8 +222,11 @@ const ProfessionalEventsPage = () => {
 
       {/* Join Event Modal (Added Blur here too for consistency) */}
       {showJoinModal && selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
+        <GuardedModal
+          onDiscard={() => setShowJoinModal(false)}
+          onSave={() => joinFormRef.current?.requestSubmit()}
+          contentClassName="bg-white dark:bg-slate-900 rounded-lg p-6 w-full max-w-md mx-4 shadow-xl"
+        >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-200">Join Event</h3>
               <button
@@ -238,7 +244,7 @@ const ProfessionalEventsPage = () => {
               <p className="text-sm text-gray-600 dark:text-slate-400">{selectedEvent.date} • {selectedEvent.location}</p>
             </div>
 
-            <form onSubmit={handleJoinSubmit}>
+            <form ref={joinFormRef} onSubmit={handleJoinSubmit}>
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Full Name *</label>
@@ -303,14 +309,16 @@ const ProfessionalEventsPage = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+        </GuardedModal>
       )}
 
       {/* Create Event Modal - Blurry Background & Dark Theme */}
       {showCreateEventModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-700 rounded-xl p-8 w-full max-w-2xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <GuardedModal
+          onDiscard={() => setShowCreateEventModal(false)}
+          onSave={() => createEventFormRef.current?.requestSubmit()}
+          contentClassName="bg-slate-900 border border-slate-700 rounded-xl p-8 w-full max-w-2xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
+        >
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-slate-100">Create New Event</h3>
               <button
@@ -322,7 +330,7 @@ const ProfessionalEventsPage = () => {
                 </svg>
               </button>
             </div>
-            <form onSubmit={handleSubmitEvent}>
+            <form ref={createEventFormRef} onSubmit={handleSubmitEvent}>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">Event Title</label>
@@ -441,8 +449,7 @@ const ProfessionalEventsPage = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+        </GuardedModal>
       )}
 
       <div className="flex">

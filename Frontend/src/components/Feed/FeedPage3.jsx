@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as employeeOfMonthService from '../../services/employeeOfMonthService';
 import { Calendar, Clock, Trophy, Users, Plus, X, Trash2, Award, ChevronRight, ArrowLeft } from 'lucide-react';
 import { getAllEvents } from '../../services/event.service';
 import { Link, useNavigate } from 'react-router-dom'
+import GuardedModal from '../ui/GuardedModal';
 
 const FeedPage3 = ({ onNavigateBack }) => {
     const [employeeData, setEmployeeData] = useState(null);
@@ -10,6 +11,7 @@ const FeedPage3 = ({ onNavigateBack }) => {
     const [showModal, setShowModal] = useState(false);
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
+    const formRef = useRef(null);
 
     const [isAdmin, setIsAdmin] = useState(false);
     const [userPoints, setUserPoints] = useState(0);
@@ -421,8 +423,12 @@ const FeedPage3 = ({ onNavigateBack }) => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-[#020839]/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-                    <div className="bg-white dark:bg-[#1F2429] rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-gray-700">
+                <GuardedModal
+                    onDiscard={handleCloseModal}
+                    onSave={() => formRef.current?.requestSubmit()}
+                    className="animate-fadeIn"
+                    contentClassName="bg-white dark:bg-[#1F2429] rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-gray-700"
+                >
                         <div className="p-8">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-bold text-[#020839] dark:text-white">Add Recognition</h2>
@@ -434,7 +440,7 @@ const FeedPage3 = ({ onNavigateBack }) => {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                                 {/* Employee Selection */}
                                 <div>
                                     <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Core Info</h3>
@@ -557,8 +563,7 @@ const FeedPage3 = ({ onNavigateBack }) => {
                                 </div>
                             </form>
                         </div>
-                    </div>
-                </div>
+                </GuardedModal>
             )}
         </div>
     );

@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { getAllEvents } from '../../services/event.service';
+import GuardedModal from '../ui/GuardedModal';
 
 const FeedPage1 = ({ onNavigateBack }) => {
     // State for the "Give Points" interaction
@@ -379,8 +380,11 @@ const FeedPage1 = ({ onNavigateBack }) => {
             </div>
             {/* Give Points Modal */}
             {showGivePointsModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-[#1F2429] rounded-2xl w-full max-w-lg p-6 relative animate-in fade-in zoom-in duration-200">
+                <GuardedModal
+                    onDiscard={() => setShowGivePointsModal(false)}
+                    onSave={submitPoints}
+                    contentClassName="bg-white dark:bg-[#1F2429] rounded-2xl w-full max-w-lg p-6 relative animate-in fade-in zoom-in duration-200"
+                >
                         <button
                             onClick={() => setShowGivePointsModal(false)}
                             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -433,8 +437,7 @@ const FeedPage1 = ({ onNavigateBack }) => {
                                 {(!isAdmin && parseInt(givePointsData.points || 0, 10) > userPoints) ? 'Insufficient points' : 'Send Points'}
                             </button>
                         </div>
-                    </div>
-                </div>
+                </GuardedModal>
             )}
         </div>
     );

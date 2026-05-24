@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import GuardedModal from "../ui/GuardedModal";
 
 // ✅ Notice we use 'onMeetingSaved' here, NOT 'onMeetingAdded'
 export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetingDeleted, meetingToEdit = null }) {
@@ -7,6 +8,7 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [loading, setLoading] = useState(false);
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -102,8 +104,11 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-[420px] rounded-xl bg-white p-6 shadow-lg dark:bg-slate-900">
+    <GuardedModal
+      onDiscard={onClose}
+      onSave={() => formRef.current?.requestSubmit()}
+      contentClassName="w-full max-w-[420px] rounded-xl bg-white p-6 shadow-lg dark:bg-slate-900"
+    >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">
             {meetingToEdit ? "Edit Meeting" : "Add Meeting"}
@@ -119,7 +124,7 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-3">
           <input
             type="text"
             placeholder="Meeting title"
@@ -180,7 +185,6 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </GuardedModal>
   );
 }
