@@ -214,6 +214,21 @@ body {
 }
 
 @media (max-width: 900px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-content: center;
+  }
+
+  .login-panel {
+    text-align: center;
+  }
+
+  .login-panel h1,
+  .login-panel p {
+    margin-inline: auto;
+  }
+
   .app-shell {
     display: block;
   }
@@ -278,6 +293,18 @@ body {
 }
 
 @media (max-width: 640px) {
+  .login-shell {
+    padding: 5rem 1rem 2rem;
+  }
+
+  .login-panel h1 {
+    font-size: 2rem;
+  }
+
+  .login-card {
+    padding: 1.25rem;
+  }
+
   .app-sidebar {
     padding-inline: 0.75rem;
   }

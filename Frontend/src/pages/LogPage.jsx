@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Moon, Sun } from "lucide-react";
 
 export default function LogPage() {
   const navigate = useNavigate();
@@ -8,6 +9,14 @@ export default function LogPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  const toggleTheme = () => {
+    const nextTheme = !isDark;
+    setIsDark(nextTheme);
+    document.documentElement.classList.toggle("dark", nextTheme);
+    localStorage.setItem("theme", nextTheme ? "dark" : "light");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +41,6 @@ export default function LogPage() {
       try {
         const { login } = await import("../services/auth.service.js");
         await login(email.trim(), password.trim());
-        alert("Login successful!");
         navigate("/dashboard");
       } catch (error) {
         alert(error.message);
@@ -41,64 +49,51 @@ export default function LogPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-screen flex items-center justify-center font-[Poppins] px-4 md:px-12 lg:px-24 py-12 bg-[var(--rn-bg)] dark:bg-[#211313]">
+    <main className="login-page relative min-h-screen w-full bg-[var(--rn-bg)] text-[var(--rn-ink)] dark:bg-[#211313] dark:text-[#fff7f1]">
       <button
-        onClick={() => document.documentElement.classList.toggle("dark")}
-        className="absolute top-4 right-4 px-4 py-2 rounded-full bg-white text-black dark:bg-black dark:text-white border border-gray-300 dark:border-gray-500 shadow-md z-50"
+        type="button"
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        className="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full border border-[var(--rn-border)] bg-white/90 text-[var(--rn-primary-dark)] shadow-sm transition hover:bg-[var(--rn-soft)] dark:border-white/10 dark:bg-white/10 dark:text-[#fff7f1]"
       >
-        toggle theme
+        {isDark ? <Sun size={18} /> : <Moon size={18} />}
       </button>
 
-      <div className="relative z-10 w-full max-w-5xl bg-white dark:bg-[#2a1717] rounded-lg shadow-xl overflow-hidden min-h-[75vh] flex flex-col md:flex-row border border-[var(--rn-border)]">
-        <img
-          src="flower1.png"
-          alt="watermark"
-          className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 w-3/3 object-contain opacity-15 pointer-events-none select-none md:hidden"
-          aria-hidden="true"
-        />
+      <section className="login-shell mx-auto grid min-h-screen w-full max-w-6xl grid-cols-[0.92fr_1.08fr] items-center gap-12 px-6 py-10 md:px-10">
+        <div className="login-panel">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--rn-primary)]">
+            RedNote PayRoll System
+          </p>
+          <h1 className="mb-4 max-w-md text-4xl font-bold leading-tight text-[var(--rn-primary-dark)] dark:text-[#fff7f1]">
+            Manage payroll and people operations with clarity.
+          </h1>
+          <p className="max-w-md text-base leading-7 text-[var(--rn-muted)] dark:text-[#ffd6cc]">
+            A focused workspace for employees, hiring, recognition, and payroll records.
+          </p>
+        </div>
 
-        {/* Left side - Login form */}
-        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-          <h3 className="text-3xl md:text-4xl font-bold mb-6 text-black dark:text-white">
-            Login in
-          </h3>
+        <div className="login-card w-full rounded-lg border border-[var(--rn-border)] bg-white p-8 shadow-xl shadow-red-950/10 dark:border-white/10 dark:bg-[#2a1717] md:p-10">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[var(--rn-ink)] dark:text-white">Welcome back</h2>
+            <p className="mt-2 text-sm text-[var(--rn-muted)] dark:text-[#ffd6cc]">
+              Sign in to continue to your dashboard.
+            </p>
+          </div>
 
-          <div className="space-y-4">
-            <button
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-white text-gray-700 hover:bg-gray-50 transition-colors"
-              onClick={() => window.open("https://google.com", "popupWindow", "width=600,height=600")}
-            >
-              <img src="googleLogo.png" alt="Google logo" className="w-5 h-5" />
-              <span>Continue With Google</span>
-            </button>
-
-            <button
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-white text-gray-700 hover:bg-gray-50 transition-colors"
-              onClick={() => window.open("https://facebook.com", "popupWindow", "width=600,height=600")}
-            >
-              <img src="facebookLogo.png" alt="Facebook logo" className="w-5 h-5" />
-              <span>Continue With Facebook</span>
-            </button>
-
-            <div className="flex items-center my-4">
-              <div className="grow h-px bg-gray-300" />
-              <span className="mx-4 text-gray-500 dark:text-[#E5E7EB]">or</span>
-              <div className="grow h-px bg-gray-300" />
-            </div>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <label className="text-xs text-gray-700 dark:text-[#E5E7EB] font-bold">Email Address</label>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <label className="text-sm font-semibold text-[var(--rn-ink)] dark:text-[#fff7f1]">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#020839] dark:text-white dark:border-[#88AAFF]"
+                className="w-full rounded-lg border border-[var(--rn-border)] bg-white px-4 py-3 text-sm text-[var(--rn-ink)] outline-none transition focus:border-[var(--rn-primary)] focus:ring-4 focus:ring-[var(--rn-focus)] dark:border-white/10 dark:bg-[#211313] dark:text-white"
                 autoComplete="email"
+                placeholder="you@company.com"
               />
               {emailError && <p className="text-red-500 text-xs mt-1">Please enter a valid email address.</p>}
 
-              <label className="text-xs text-gray-700 font-bold">Password</label>
+              <label className="text-sm font-semibold text-[var(--rn-ink)] dark:text-[#fff7f1]">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -106,39 +101,40 @@ export default function LogPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#020839] dark:text-white dark:border-[#88AAFF]"
+                  className="w-full rounded-lg border border-[var(--rn-border)] bg-white px-4 py-3 pr-12 text-sm text-[var(--rn-ink)] outline-none transition focus:border-[var(--rn-primary)] focus:ring-4 focus:ring-[var(--rn-focus)] dark:border-white/10 dark:bg-[#211313] dark:text-white"
                   autoComplete="current-password"
+                  placeholder="Enter password"
                 />
-                <span
+                <button
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2 cursor-pointer text-xs text-gray-600"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[var(--rn-muted)] transition hover:bg-[var(--rn-soft)] hover:text-[var(--rn-primary)] dark:text-[#ffd6cc] dark:hover:bg-white/10"
                 >
-                  {showPassword ? "Hide" : "Show"}
-                </span>
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
               </div>
               {passwordError && <p className="text-red-500 text-xs mt-1">Password must be at least 8 characters long.</p>}
 
-              <div className="flex justify-end">
-                <a href="/" className="text-xs text-gray-500 hover:underline">forget password</a>
+              <div className="flex items-center justify-between gap-3 text-sm">
+                <label className="flex items-center gap-2 text-[var(--rn-muted)] dark:text-[#ffd6cc]">
+                  <input type="checkbox" className="h-4 w-4 rounded border-[var(--rn-border)] accent-[var(--rn-primary)]" />
+                  Remember me
+                </label>
+                <a href="/" className="font-medium text-[var(--rn-primary)] hover:underline">Forgot password?</a>
               </div>
 
-              <button type="submit" className="mt-4 w-full rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-semibold hover:bg-blue-700">
-                Log in
+              <button type="submit" className="mt-2 w-full rounded-lg bg-[var(--rn-primary)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--rn-primary-hover)] focus:outline-none focus:ring-4 focus:ring-[var(--rn-focus)]">
+                Sign in
               </button>
 
-              <div className="text-sm text-gray-600">
+              <div className="pt-2 text-center text-sm text-[var(--rn-muted)] dark:text-[#ffd6cc]">
                 Don't have an account?{" "}
-                <Link to="/Signup" className="text-blue-400">Create account</Link>
+                <Link to="/Signup" className="font-semibold text-[var(--rn-primary)]">Create account</Link>
               </div>
             </form>
-          </div>
         </div>
-
-        {/* Right side - Desktop illustration */}
-        <div className="w-full md:w-1/2 hidden md:flex items-center justify-center p-8">
-          <img src="flower1.png" alt="Flower illustration" className="w-full max-w-md object-contain" />
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
