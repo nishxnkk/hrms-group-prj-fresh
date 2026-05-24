@@ -1,0 +1,21 @@
+{
+  "name": "rednote-payroll-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "RedNote PayRoll System with a React frontend and Express/Postgres backend.",
+  "workspaces": [
+    "Backend",
+    "Hr"
+  ],
+  "scripts": {
+    "install:all": "npm ci --prefix Backend && npm ci --prefix Hr",
+    "dev:backend": "npm run dev --prefix Backend",
+    "dev:frontend": "npm run dev --prefix Hr",
+    "build": "npm run build --prefix Hr",
+    "test": "npm test --prefix Backend",
+    "lint": "npm run lint --prefix Hr"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,33 @@
+{
+    "name": "rednote-payroll-backend",
+    "version": "1.0.0",
+    "description": "Backend API for the RedNote PayRoll System",
+    "main": "server.js",
+    "type": "module",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "node server.js",
+        "test": "mocha --exit"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.22.1",
+        "jsonwebtoken": "^9.0.2",
+        "multer": "^2.0.2",
+        "nodemailer": "^6.10.1",
+        "pdfkit": "^0.17.2",
+        "pg": "^8.11.5",
+        "socket.io": "^4.8.1",
+        "serverless-http": "^3.0.0"
+    },
+    "devDependencies": {
+        "mocha": "^10.2.0",
+        "supertest": "^6.3.3",
+        "chai": "^4.3.7"
+    }
+}
