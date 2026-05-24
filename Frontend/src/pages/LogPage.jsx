@@ -4,10 +4,10 @@ import { Eye, EyeOff, Moon, Sun } from "lucide-react";
 
 export default function LogPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
 
@@ -22,12 +22,11 @@ export default function LogPage() {
     e.preventDefault();
     let isValid = true;
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email.trim())) {
-      setEmailError(true);
+    if (username.trim().length < 3) {
+      setUsernameError(true);
       isValid = false;
     } else {
-      setEmailError(false);
+      setUsernameError(false);
     }
 
     if (password.trim().length < 8) {
@@ -40,7 +39,7 @@ export default function LogPage() {
     if (isValid) {
       try {
         const { login } = await import("../services/auth.service.js");
-        await login(email.trim(), password.trim());
+        await login(username.trim(), password.trim());
         navigate("/dashboard");
       } catch (error) {
         alert(error.message);
@@ -81,17 +80,18 @@ export default function LogPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <label className="text-sm font-semibold text-[var(--rn-ink)] dark:text-[#fff7f1]">Email Address</label>
+              <label className="text-sm font-semibold text-[var(--rn-ink)] dark:text-[#fff7f1]">Username</label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
+                minLength={3}
                 className="w-full rounded-lg border border-[var(--rn-border)] bg-white px-4 py-3 text-sm text-[var(--rn-ink)] outline-none transition focus:border-[var(--rn-primary)] focus:ring-4 focus:ring-[var(--rn-focus)] dark:border-white/10 dark:bg-[#211313] dark:text-white"
-                autoComplete="email"
-                placeholder="you@company.com"
+                autoComplete="username"
+                placeholder="Enter username"
               />
-              {emailError && <p className="text-red-500 text-xs mt-1">Please enter a valid email address.</p>}
+              {usernameError && <p className="text-red-500 text-xs mt-1">Username must be at least 3 characters long.</p>}
 
               <label className="text-sm font-semibold text-[var(--rn-ink)] dark:text-[#fff7f1]">Password</label>
               <div className="relative">

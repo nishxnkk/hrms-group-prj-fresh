@@ -4,6 +4,7 @@ import { focusField, focusFirstInvalid, handleInvalidCapture } from "../utils/fo
 
 const SignUp = () => {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [designation, setDesignation] = useState("");
@@ -17,10 +18,11 @@ const SignUp = () => {
   const [profileFile, setProfileFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({ name: "", email: "", password: "", designation: "", phone: "" });
+  const [errors, setErrors] = useState({ name: "", username: "", email: "", password: "", designation: "", phone: "" });
   const formRef = useRef(null);
   const fieldRefs = {
     name: useRef(null),
+    username: useRef(null),
     email: useRef(null),
     password: useRef(null),
     designation: useRef(null),
@@ -37,8 +39,10 @@ const SignUp = () => {
   }, []);
 
   const validate = () => {
-    const newErrors = { name: "", email: "", password: "", designation: "", phone: "" };
+    const newErrors = { name: "", username: "", email: "", password: "", designation: "", phone: "" };
     if (name.trim().length < 3) newErrors.name = "Name must be at least 3 characters long.";
+    const usernamePattern = /^[a-zA-Z0-9_]{3,30}$/;
+    if (!usernamePattern.test(username.trim())) newErrors.username = "Username must be 3-30 letters, numbers, or underscores.";
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email.trim())) newErrors.email = "Please enter a valid email address.";
     if (password.trim().length < 8) newErrors.password = "Password must be at least 8 characters long.";
@@ -48,7 +52,7 @@ const SignUp = () => {
     setErrors(newErrors);
     const firstError = Object.keys(newErrors).find((key) => newErrors[key]);
     if (firstError) focusField(fieldRefs[firstError]?.current);
-    return !newErrors.name && !newErrors.email && !newErrors.password && !newErrors.designation && !newErrors.phone;
+    return !newErrors.name && !newErrors.username && !newErrors.email && !newErrors.password && !newErrors.designation && !newErrors.phone;
   };
 
   const handleSubmit = async (e) => {
@@ -94,6 +98,7 @@ const SignUp = () => {
           },
           body: JSON.stringify({
             fullname: name,
+            username: username.trim(),
             email: email,
             password: password,
             designation: designation,
@@ -117,10 +122,11 @@ const SignUp = () => {
           localStorage.setItem("user", JSON.stringify(data.user));
 
           setName("");
+          setUsername("");
           setEmail("");
           setPassword("");
           setDesignation("");
-          setErrors({ name: "", email: "", password: "", designation: "" });
+          setErrors({ name: "", username: "", email: "", password: "", designation: "", phone: "" });
           if (typeof robot !== "undefined") robot.checked = false;
 
           // Redirect to dashboard
@@ -131,6 +137,9 @@ const SignUp = () => {
             // Duplicate email
             setErrors({ ...errors, email: "This email is already registered. Please use a different email or log in." });
             alert("❌ This email is already registered!");
+          } else if (response.status === 400 && data.message === "Username already exists") {
+            setErrors({ ...errors, username: "This username is already taken. Please choose another one." });
+            alert("Username already taken. Please choose another one.");
           } else {
             // Other errors
             alert(`❌ Error: ${data.message || "Failed to create account"}`);
@@ -173,6 +182,12 @@ const SignUp = () => {
               <div>
                 <label htmlFor="jobTitle" className="block text-sm font-semibold mb-1 text-black">Job title</label>
                 <input id="jobTitle" name="jobTitle" type="text" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" placeholder="e.g. Senior Engineer" />
+              </div>
+
+              <div>
+                <label htmlFor="username" className="block text-sm font-semibold mb-1 text-black">Username</label>
+                <input ref={fieldRefs.username} id="username" name="username" type="text" required minLength={3} maxLength={30} pattern="[A-Za-z0-9_]{3,30}" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" placeholder="Choose a username" autoComplete="username" />
+                {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
               </div>
 
               <div>

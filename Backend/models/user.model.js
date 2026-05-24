@@ -6,6 +6,7 @@ export const createUserTable = async () => {
       id SERIAL PRIMARY KEY,
       employee_id VARCHAR(50) DEFAULT '',
       fullname VARCHAR(255) NOT NULL,
+      username VARCHAR(100) UNIQUE,
       email VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
       designation VARCHAR(100) DEFAULT '',
@@ -23,6 +24,28 @@ export const createUserTable = async () => {
     await pool.query(query);
     // Ensure columns exist for older databases
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS employee_id VARCHAR(50) DEFAULT ''`);
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(100)`);
+    await pool.query(`
+      WITH candidates AS (
+        SELECT
+          id,
+          NULLIF(LOWER(REGEXP_REPLACE(SPLIT_PART(email, '@', 1), '[^a-zA-Z0-9_]', '_', 'g')), '') AS base_username,
+          ROW_NUMBER() OVER (
+            PARTITION BY LOWER(REGEXP_REPLACE(SPLIT_PART(email, '@', 1), '[^a-zA-Z0-9_]', '_', 'g'))
+            ORDER BY id
+          ) AS duplicate_rank
+        FROM users
+        WHERE username IS NULL OR username = ''
+      )
+      UPDATE users
+      SET username = CASE
+        WHEN candidates.duplicate_rank = 1 THEN COALESCE(candidates.base_username, 'user_' || users.id)
+        ELSE COALESCE(candidates.base_username, 'user') || '_' || users.id
+      END
+      FROM candidates
+      WHERE users.id = candidates.id
+    `);
+    await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS users_username_unique_idx ON users (username) WHERE username IS NOT NULL`);
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS designation VARCHAR(100) DEFAULT ''`);
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS job_title VARCHAR(100) DEFAULT ''`);
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS department VARCHAR(100) DEFAULT ''`);
@@ -61,6 +84,7 @@ export const createUserTable = async () => {
 
 export const createUser = async (
   fullname,
+  username,
   email,
   password,
   designation = '',
@@ -75,11 +99,11 @@ export const createUser = async (
   gender = 'Not Specified'
 ) => {
   const query = `
-    INSERT INTO users (employee_id, fullname, email, password, designation, job_title, department, phone, date_of_joining, status, profile_picture, role, gender)
-    VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    INSERT INTO users (employee_id, fullname, username, email, password, designation, job_title, department, phone, date_of_joining, status, profile_picture, role, gender)
+    VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
     RETURNING *;
   `;
-  const values = [employee_id, fullname, email, password, designation, job_title, department, phone, date_of_joining, status, profile_picture, role, gender];
+  const values = [employee_id, fullname, username, email, password, designation, job_title, department, phone, date_of_joining, status, profile_picture, role, gender];
   const { rows } = await pool.query(query, values);
   return rows[0];
 };
@@ -115,6 +139,12 @@ export const findUserByEmail = async (email) => {
   return rows[0];
 };
 
+export const findUserByUsername = async (username) => {
+  const query = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
+  const { rows } = await pool.query(query, [username]);
+  return rows[0];
+};
+
 export const findUserById = async (id) => {
   const query = "SELECT * FROM users WHERE id = $1";
   const { rows } = await pool.query(query, [id]);
@@ -126,6 +156,7 @@ export const updateUser = async (id, updates) => {
   const allowed = [
     "employee_id",
     "fullname",
+    "username",
     "email",
     "password",
     "designation",
@@ -171,14 +202,14 @@ export const updateUser = async (id, updates) => {
     return user;
   }
 
-  const query = `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} RETURNING id, employee_id, fullname, email, designation, job_title, department, phone, date_of_joining, status, profile_picture, gender, role, created_at, resigned_at, last_activity`;
+  const query = `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} RETURNING id, employee_id, fullname, username, email, designation, job_title, department, phone, date_of_joining, status, profile_picture, gender, role, created_at, resigned_at, last_activity`;
   values.push(id);
   const { rows } = await pool.query(query, values);
   return rows[0];
 };
 
 export const getAllUsers = async () => {
-  const query = `SELECT id, employee_id, fullname, email, designation, job_title, department, phone, date_of_joining, status, profile_picture, gender, points, role, created_at, last_activity FROM users ORDER BY points DESC, fullname`;
+  const query = `SELECT id, employee_id, fullname, username, email, designation, job_title, department, phone, date_of_joining, status, profile_picture, gender, points, role, created_at, last_activity FROM users ORDER BY points DESC, fullname`;
   const { rows } = await pool.query(query);
   return rows;
 };

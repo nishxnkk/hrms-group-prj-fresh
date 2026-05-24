@@ -1,12 +1,22 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { findUserByEmail, findUserById, getAllUsers as getAllUsersModel, archiveUserById, getArchivedUsers } from "../models/user.model.js";
+import { findUserById, findUserByUsername, getAllUsers as getAllUsersModel, archiveUserById, getArchivedUsers } from "../models/user.model.js";
 import { createUserService, updateUserService } from "../services/user.service.js";
 import { addToken } from "../models/blacklistedTokens.js";
 import pool from "../db/db.js";
 
+const makeUsername = (body) => {
+    const source = body.username || (body.email ? body.email.split("@")[0] : body.fullname);
+    return (source || "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9_]/g, "_");
+};
+
 const normalizeUserPayload = (body) => ({
     ...body,
+    username: makeUsername(body),
     date_of_joining: body.date_of_joining || null,
     designation: body.designation || '',
     job_title: body.job_title || '',
@@ -24,15 +34,15 @@ const normalizeUserPayload = (body) => ({
  */
 export const signup = async (req, res) => {
     try {
-        console.log("DATABASE_URL =", process.env.DATABASE_URL);
-        const { fullname, email, password, designation, job_title, department, phone, date_of_joining, employee_id, profile_picture, status, role, gender } = normalizeUserPayload(req.body);
+        const { fullname, username, email, password, designation, job_title, department, phone, date_of_joining, employee_id, profile_picture, status, role, gender } = normalizeUserPayload(req.body);
 
-        if (!fullname || !email || !password) {
+        if (!fullname || !username || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
         const newUser = await createUserService(
             fullname,
+            username,
             email,
             password,
             designation,
@@ -63,6 +73,7 @@ export const signup = async (req, res) => {
                 id: newUser.id,
                 employee_id: newUser.employee_id,
                 fullname: newUser.fullname,
+                username: newUser.username,
                 email: newUser.email,
                 designation: newUser.designation,
                 job_title: newUser.job_title,
@@ -87,11 +98,12 @@ export const signup = async (req, res) => {
  */
 export const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { username, email, password } = req.body;
+        const loginName = (username || email || "").trim();
 
-        if (!email || !password) return res.status(400).json({ message: "All fields are required" });
+        if (!loginName || !password) return res.status(400).json({ message: "All fields are required" });
 
-        const user = await findUserByEmail(email);
+        const user = await findUserByUsername(loginName);
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -109,6 +121,7 @@ export const login = async (req, res) => {
             user: {
                 id: user.id,
                 fullname: user.fullname,
+                username: user.username,
                 email: user.email,
                 role: user.role,
                 profile_picture: user.profile_picture,
@@ -319,7 +332,7 @@ export const updateUser = async (req, res) => {
         res.status(200).json({ message: "User updated", user: updatedUser });
     } catch (error) {
         console.error("❌ Update User Error:", error.message);
-        if (error.message === "Email already in use") {
+        if (error.message === "Email already in use" || error.message === "Username already in use") {
             return res.status(400).json({ message: error.message });
         }
         if (error.message === "User not found") {
@@ -336,14 +349,15 @@ export const addUser = async (req, res) => {
         // const requester = await findUserById(req.userId); 
         // if (requester.role !== 'Admin') return res.status(403).json({ message: "Access denied" });
 
-        const { fullname, email, password, designation, job_title, department, phone, date_of_joining, employee_id, profile_picture, status, role, gender } = normalizeUserPayload(req.body);
+        const { fullname, username, email, password, designation, job_title, department, phone, date_of_joining, employee_id, profile_picture, status, role, gender } = normalizeUserPayload(req.body);
 
-        if (!fullname || !email || !password) {
+        if (!fullname || !username || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
         const newUser = await createUserService(
             fullname,
+            username,
             email,
             password,
             designation,
@@ -364,8 +378,8 @@ export const addUser = async (req, res) => {
         });
     } catch (error) {
         console.error("❌ Add User Error:", error.message);
-        if (error.message === "User already exists") {
-            return res.status(400).json({ message: "User already exists" });
+        if (error.message === "User already exists" || error.message === "Username already exists") {
+            return res.status(400).json({ message: error.message });
         }
         res.status(500).json({ message: "Internal Server Error" });
     }

@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
-import { createUser, findUserByEmail, findUserById, updateUser } from "../models/user.model.js";
+import { createUser, findUserByEmail, findUserById, findUserByUsername, updateUser } from "../models/user.model.js";
 
 export const createUserService = async (
     fullname,
+    username,
     email,
     password,
     designation = '',
@@ -21,9 +22,15 @@ export const createUserService = async (
         throw new Error("User already exists");
     }
 
+    const existingUsername = await findUserByUsername(username);
+    if (existingUsername) {
+        throw new Error("Username already exists");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await createUser(
         fullname,
+        username,
         email,
         hashedPassword,
         designation,
@@ -51,6 +58,13 @@ export const updateUserService = async (id, updates) => {
         const existing = await findUserByEmail(updates.email);
         if (existing && existing.id !== user.id) {
             throw new Error("Email already in use");
+        }
+    }
+
+    if (updates.username && updates.username !== user.username) {
+        const existing = await findUserByUsername(updates.username);
+        if (existing && existing.id !== user.id) {
+            throw new Error("Username already in use");
         }
     }
 

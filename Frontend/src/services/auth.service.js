@@ -1,6 +1,6 @@
 const API_URL = `${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/users`; 
 
-export const login = async (email, password) => {
+export const login = async (username, password) => {
     // eslint-disable-next-line no-useless-catch
     try {
         const response = await fetch(`${API_URL}/login`, {
@@ -8,7 +8,7 @@ export const login = async (email, password) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ username, password }),
         });
 
         const data = await response.json();
