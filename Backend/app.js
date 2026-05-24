@@ -23,9 +23,10 @@ const configuredOrigins = (process.env.FRONTEND_ORIGIN || '')
   .map((origin) => origin.trim())
   .filter(Boolean);
 const allowedOrigins = [...new Set([...configuredOrigins, 'http://localhost:5173'])];
+const isLocalDevOrigin = (origin) => /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || '');
 app.use((req, res, next) => {
   const origin = req.get('origin');
-  if (allowedOrigins.includes(origin)) {
+  if (allowedOrigins.includes(origin) || isLocalDevOrigin(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
