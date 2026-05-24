@@ -63,7 +63,7 @@ export const initDb = async () => {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS course_assignments (
         id SERIAL PRIMARY KEY,
-        course_id INT REFERENCES users(id),
+        course_id INT REFERENCES courses(id),
         employee_id INT REFERENCES users(id),
         completed BOOLEAN DEFAULT FALSE,
         completed_at TIMESTAMP,

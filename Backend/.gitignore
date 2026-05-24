@@ -28,3 +28,14 @@ coverage/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Generated files
+offers/
+
+# Test/debug scripts
+backend_test.js
+backend_test_2_users.js
+test_auth_script.js
+test_update_user.js
+test_employee_month.js
+test_output.txt
