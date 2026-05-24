@@ -12,12 +12,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function HiringStatsChart() {
-  const [mounted, setMounted] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setMounted(true);
     fetchData();
   }, []);
 
@@ -61,15 +59,15 @@ export default function HiringStatsChart() {
   };
 
   return (
-    <div className="w-full h-[400px] bg-white dark:bg-slate-900 p-6 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="flex h-[300px] w-full flex-col rounded-lg border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="mb-3 flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-slate-100">Monthly Hiring & Resignations</h2>
+          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100">Monthly Hiring & Resignations</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">Overview of employee movement and recruitment activity</p>
         </div>
         <div className="text-right">
           <div className="text-xs text-gray-500">Resigned (YTD)</div>
-          <div className="text-xl font-bold text-red-600 dark:text-[#FB923C]">{data.reduce((s, d) => s + (d.attrition || 0), 0)}</div>
+          <div className="text-lg font-bold text-red-600 dark:text-[#FB923C]">{data.reduce((s, d) => s + (d.attrition || 0), 0)}</div>
         </div>
       </div>
 
@@ -81,6 +79,7 @@ export default function HiringStatsChart() {
           return <div className="p-6 text-center text-gray-500">No hiring data available for the current year.</div>;
         }
         return (
+          <div className="min-h-0 flex-1">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid stroke="#E6E6E6" strokeDasharray="3 3" />
@@ -104,7 +103,7 @@ export default function HiringStatsChart() {
               />
 
               <Legend
-                wrapperStyle={{ paddingTop: '30px', paddingBottom: '10px' }}
+                wrapperStyle={{ paddingTop: '8px', fontSize: '12px' }}
                 iconType="circle"
                 align="center"
                 verticalAlign="bottom"
@@ -153,6 +152,7 @@ export default function HiringStatsChart() {
 
             </LineChart>
           </ResponsiveContainer>
+          </div>
         );
       })()}
     </div>

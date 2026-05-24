@@ -30,10 +30,10 @@ export default function StatsCards({ stats }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, index) => (
-        <div key={index} className="group bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#ddeeff] dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[#2c50ab]/30 hover:-translate-y-1 transition-all duration-300 ease-out">
-          <div className="flex justify-between items-start mb-4">
+        <div key={index} className="group rounded-lg border border-[#ddeeff] bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:shadow-[#2c50ab]/30">
+          <div className="mb-3 flex items-start justify-between">
             <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">
               {card.title}
             </h3>
@@ -54,7 +54,7 @@ export default function StatsCards({ stats }) {
             </div>
           </div>
 
-          <p className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+          <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             {card.value.toLocaleString()}
           </p>
 

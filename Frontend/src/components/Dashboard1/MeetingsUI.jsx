@@ -95,18 +95,18 @@ export default function MeetingsUI() {
       {/* ✅ FIX: Replaced [.dark_&] with in-[.dark] 
          This means "If inside a .dark container, use this style"
       */}
-      <div className="w-full h-full flex flex-col min-h-[300px] bg-white in-[.dark]:bg-gray-900 p-6 rounded-xl shadow-md transition-colors duration-200">
+      <div className="flex h-[240px] w-full flex-col rounded-lg bg-white p-4 shadow-md transition-colors duration-200 in-[.dark]:bg-gray-900">
         
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800 in-[.dark]:text-blue-400 flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-gray-800 in-[.dark]:text-blue-400">
+            <Calendar className="h-5 w-5" />
             Scheduled Meetings
           </h2>
           {isAdmin && (
             <button
               onClick={handleOpenAdd}
-              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+              className="flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
               <Plus size={16} />
               Add Meeting
@@ -115,13 +115,13 @@ export default function MeetingsUI() {
         </div>
 
         {/* Grid Layout */}
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto pr-2">
           {loading && <p className="text-sm text-gray-400">Loading meetings...</p>}
           {!loading && meetings.length === 0 && (
             <p className="text-sm text-gray-400">No meetings scheduled</p>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
             {!loading &&
               meetings.map((raw, idx) => {
                 const m = formatMeeting(raw);
@@ -131,7 +131,7 @@ export default function MeetingsUI() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * idx }}
-                    className="relative bg-white in-[.dark]:bg-gray-800 border border-gray-200 in-[.dark]:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all group"
+                    className="group relative rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-all hover:shadow-md in-[.dark]:border-gray-700 in-[.dark]:bg-gray-800"
                   >
                     
                     {/* Admin Actions */}
@@ -153,7 +153,7 @@ export default function MeetingsUI() {
                     )}
 
                     {/* Title Text */}
-                    <h4 className="text-gray-900 in-[.dark]:text-gray-100 font-semibold text-lg pr-12 truncate">
+                    <h4 className="truncate pr-12 text-base font-semibold text-gray-900 in-[.dark]:text-gray-100">
                       {m.title}
                     </h4>
 
@@ -169,7 +169,7 @@ export default function MeetingsUI() {
 
                     {/* Join Button */}
                     <button className="
-                      mt-4 px-4 py-2 rounded-md w-full
+                      mt-3 px-4 py-1.5 rounded-md w-full
                       bg-[#2C50AB] hover:bg-[#3b62c7]
                       text-white text-sm font-medium transition-colors
                     ">
@@ -182,7 +182,7 @@ export default function MeetingsUI() {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-100 in-[.dark]:border-gray-700">
+        <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 in-[.dark]:border-gray-700">
           <div className="text-xs text-gray-400">Last synced just now</div>
           <button onClick={fetchMeetings} className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-xs font-medium hover:bg-blue-700 transition-colors">
             Sync
