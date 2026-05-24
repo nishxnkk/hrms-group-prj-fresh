@@ -312,18 +312,18 @@ const ProfessionalEventsPage = () => {
         </GuardedModal>
       )}
 
-      {/* Create Event Modal - Blurry Background & Dark Theme */}
+      {/* Create Event Modal */}
       {showCreateEventModal && (
         <GuardedModal
           onDiscard={() => setShowCreateEventModal(false)}
           onSave={() => createEventFormRef.current?.requestSubmit()}
-          contentClassName="bg-slate-900 border border-slate-700 rounded-xl p-8 w-full max-w-2xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
+          contentClassName="bg-white border border-slate-200 rounded-xl p-8 w-full max-w-2xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto dark:bg-slate-900 dark:border-slate-800"
         >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-slate-100">Create New Event</h3>
+              <h3 className="text-2xl font-bold text-slate-950 dark:text-slate-100">Create New Event</h3>
               <button
                 onClick={() => setShowCreateEventModal(false)}
-                className="text-slate-500 hover:text-slate-300 transition-colors"
+                className="text-slate-400 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -333,83 +333,83 @@ const ProfessionalEventsPage = () => {
             <form ref={createEventFormRef} onSubmit={handleSubmitEvent}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Event Title</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">Event Title</label>
                   <input
                     type="text"
                     name="title"
                     value={newEvent.title}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100 placeholder-slate-500"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 placeholder-slate-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-500"
                     placeholder="Enter event title"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Location</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">Location</label>
                   <input
                     type="text"
                     name="location"
                     value={newEvent.location}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100 placeholder-slate-500"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 placeholder-slate-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-500"
                     placeholder="Enter location"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">Description</label>
                   <textarea
                     name="description"
                     value={newEvent.description}
                     onChange={handleInputChange}
                     required
                     rows="3"
-                    className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100 placeholder-slate-500"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 placeholder-slate-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-500"
                     placeholder="Enter description"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Event Date</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">Event Date</label>
                   <input
                     type="date"
                     name="event_date"
                     value={newEvent.event_date}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100 [color-scheme:dark]"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 [color-scheme:light] dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Start Time</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">Start Time</label>
                     <input
                       type="time"
                       name="start_time"
                       value={newEvent.start_time}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100 [color-scheme:dark]"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 [color-scheme:light] dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">End Time</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">End Time</label>
                     <input
                       type="time"
                       name="end_time"
                       value={newEvent.end_time}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100 [color-scheme:dark]"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 [color-scheme:light] dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Event Type</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">Event Type</label>
                   <select
                     name="event_type"
                     value={newEvent.event_type}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                   >
                     <option value="Conference">Conference</option>
                     <option value="Workshop">Workshop</option>
@@ -421,7 +421,7 @@ const ProfessionalEventsPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Max Attendees</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2 dark:text-slate-200">Max Attendees</label>
                   <input
                     type="number"
                     name="max_attendees"
@@ -429,7 +429,7 @@ const ProfessionalEventsPage = () => {
                     onChange={handleInputChange}
                     min="1"
                     required
-                    className="w-full px-4 py-2 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-800 text-slate-100"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[var(--rn-focus)] focus:border-slate-500 bg-white text-slate-950 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                   />
                 </div>
               </div>
@@ -437,13 +437,13 @@ const ProfessionalEventsPage = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateEventModal(false)}
-                  className="px-6 py-2 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-800 transition-colors"
+                  className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+                  className="px-6 py-2 bg-[var(--rn-action)] text-white rounded-lg hover:bg-[var(--rn-action-hover)] transition-colors shadow-lg"
                 >
                   Create Event
                 </button>
