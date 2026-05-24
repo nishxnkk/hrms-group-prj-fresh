@@ -37,8 +37,8 @@ function EmployeesPage() {
       setUsers(prev => prev.map(u => {
         if (String(u.id) !== String(d.userId)) return u;
         const currRaw = (u.raw_status || u.status || '').toString().trim().toUpperCase();
-        // Do not let ACTIVE/IDLE/INACTIVE overwrite a user explicitly marked RESIGNED
-        if (currRaw === 'RESIGNED' && d.status !== 'RESIGNED') {
+        // Do not let live presence overwrite a manually set inactive/resigned status.
+        if ((currRaw === 'INACTIVE' || currRaw === 'RESIGNED') && d.status !== currRaw) {
           return { ...u, last_activity: d.last_activity || u.last_activity };
         }
         return { ...u, status: d.status, last_activity: d.last_activity };
@@ -140,7 +140,8 @@ function EmployeesPage() {
   // Toggle a user's status (Admin only)
   const handleToggleStatus = async (id, currentStatus) => {
     if (!isAdmin) return;
-    const newStatus = (currentStatus === 'ACTIVE') ? 'INACTIVE' : 'ACTIVE';
+    const normalizedStatus = (currentStatus || '').toString().trim().toUpperCase();
+    const newStatus = (normalizedStatus === 'ACTIVE' || normalizedStatus === 'IDLE') ? 'INACTIVE' : 'ACTIVE';
     if (!(await window.uiConfirm?.(`Set user #${id} status to ${newStatus}?`))) return;
 
     try {
@@ -154,7 +155,7 @@ function EmployeesPage() {
       if (res.ok) {
         const json = await res.json();
         const updated = json.user;
-        setUsers(prev => prev.map(u => u.id === updated.id ? { ...u, ...updated } : u));
+        setUsers(prev => prev.map(u => u.id === updated.id ? { ...u, ...updated, raw_status: updated.status } : u));
       } else {
         const err = await res.json().catch(() => null);
         window.uiAlert?.(err?.message || 'Failed to update status');
@@ -208,7 +209,7 @@ function EmployeesPage() {
       if (res.ok) {
         const json = await res.json();
         const updated = json.user;
-        setUsers(prev => prev.map(u => u.id === updated.id ? { ...u, ...updated } : u));
+        setUsers(prev => prev.map(u => u.id === updated.id ? { ...u, ...updated, raw_status: updated.status } : u));
       } else {
         const err = await res.json().catch(() => null);
         window.uiAlert?.(err?.message || 'Failed to reinstate');

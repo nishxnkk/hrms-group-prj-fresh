@@ -74,13 +74,17 @@ io.on("connection", (socket) => {
             const status = row.status ? row.status.toString().trim().toUpperCase() : null;
             const last = row.last_activity ? new Date(row.last_activity).toISOString() : new Date().toISOString();
 
-            if (status === 'RESIGNED') {
-                // If user is resigned, ensure they're not listed as online and broadcast resigned
+            if (status === 'RESIGNED' || status === 'INACTIVE') {
+                // If user is manually disabled/resigned, keep them out of online presence.
                 onlineUsers.delete(idStr);
                 io.emit("online_users", Array.from(onlineUsers.keys()));
                 const resignedAtIso = row.resigned_at ? new Date(row.resigned_at).toISOString() : null;
-                io.emit('presence:update', { userId: idStr, status: 'RESIGNED', last_activity: resignedAtIso });
-                if (process.env.NODE_ENV !== 'test') console.log(`User ${idStr} attempted connect but is resigned.`);
+                io.emit('presence:update', {
+                    userId: idStr,
+                    status,
+                    last_activity: status === 'RESIGNED' ? resignedAtIso : row.last_activity || null
+                });
+                if (process.env.NODE_ENV !== 'test') console.log(`User ${idStr} attempted connect but is ${status}.`);
             } else {
                 io.emit('presence:update', { userId: idStr, status: 'ACTIVE', last_activity: last });
                 if (process.env.NODE_ENV !== 'test') console.log(`User ${idStr} is online. Total online: ${onlineUsers.size}`);
@@ -110,14 +114,18 @@ io.on("connection", (socket) => {
                 // ensure they are marked online and update DB if not resigned
             const { rows: statusRows } = await pool.query('SELECT status FROM users WHERE id = $1', [idStr]);
             const status = statusRows[0] && statusRows[0].status ? statusRows[0].status.toString().trim().toUpperCase() : null;
-            if (status === 'RESIGNED') {
-                // If resigned, remove from online users map and broadcast resigned
+            if (status === 'RESIGNED' || status === 'INACTIVE') {
+                // If manually disabled/resigned, remove from online users map and broadcast status.
                 onlineUsers.delete(idStr);
                 io.emit("online_users", Array.from(onlineUsers.keys()));
                 const { rows: r } = await pool.query('SELECT resigned_at FROM users WHERE id = $1', [idStr]);
                 const resignedAtIso = r[0] && r[0].resigned_at ? new Date(r[0].resigned_at).toISOString() : null;
-                io.emit('presence:update', { userId: idStr, status: 'RESIGNED', last_activity: resignedAtIso });
-                if (process.env.NODE_ENV !== 'test') console.log(`User ${idStr} attempted to become active but is resigned.`);
+                io.emit('presence:update', {
+                    userId: idStr,
+                    status,
+                    last_activity: status === 'RESIGNED' ? resignedAtIso : null
+                });
+                if (process.env.NODE_ENV !== 'test') console.log(`User ${idStr} attempted to become active but is ${status}.`);
             } else {
                 onlineUsers.set(idStr, socket.id);
                 io.emit("online_users", Array.from(onlineUsers.keys()));

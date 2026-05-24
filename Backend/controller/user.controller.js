@@ -156,8 +156,10 @@ export const getAllUsers = async (req, res) => {
         // Derive status from admin-set status or last_activity timestamps
         const normalized = users.map(u => {
             const raw = (u.status || '').toString().trim().toUpperCase();
-            // If admin explicitly set INACTIVE or RESIGNED, respect it (manual disabling / resignation)
-            if (raw === 'INACTIVE' || raw === 'RESIGNED') return { ...u, status: raw, raw_status: raw };
+            // If admin explicitly set a status, respect it instead of recomputing from presence.
+            if (raw === 'ACTIVE' || raw === 'INACTIVE' || raw === 'RESIGNED') {
+                return { ...u, status: raw, raw_status: raw };
+            }
 
             // If we have a live socket connection for this user, prefer that as ACTIVE
             let computed = 'UNKNOWN';
@@ -216,16 +218,20 @@ export const heartbeat = async (req, res) => {
         const user = await findUserById(uid);
         const status = user && user.status ? user.status.toString().trim().toUpperCase() : null;
 
-        if (status === 'RESIGNED') {
-            // Don't update last_activity for resigned users; just emit resigned
+        if (status === 'RESIGNED' || status === 'INACTIVE') {
+            // Don't let heartbeat flip manually inactive/resigned users back to active.
             try {
                 if (global.io) {
-                    global.io.emit('presence:update', { userId: String(uid), status: 'RESIGNED', last_activity: user.resigned_at || null });
+                    global.io.emit('presence:update', {
+                        userId: String(uid),
+                        status: status,
+                        last_activity: status === 'RESIGNED' ? user.resigned_at || null : user.last_activity || null
+                    });
                 }
             } catch (e) {
-                console.warn('Failed to emit presence update for resigned user', e);
+                console.warn('Failed to emit presence update for inactive/resigned user', e);
             }
-            return res.json({ ok: true, resigned: true });
+            return res.json({ ok: true, inactive: status === 'INACTIVE', resigned: status === 'RESIGNED' });
         }
 
         // Not resigned — update last_activity and emit active
@@ -317,8 +323,9 @@ export const updateUser = async (req, res) => {
         if (updates.status && global && global.io) {
             try {
                 global.io.emit('presence:update', { userId: String(updatedUser.id), status: updatedUser.status, last_activity: updatedUser.last_activity || null });
-                // If user was marked as resigned, remove them from onlineUsers map so presence won't flip back on refresh
-                if (updatedUser.status && updatedUser.status.toString().trim().toUpperCase() === 'RESIGNED' && global.onlineUsers) {
+                // If user was manually disabled/resigned, remove them from onlineUsers so presence won't flip back.
+                const updatedStatus = updatedUser.status ? updatedUser.status.toString().trim().toUpperCase() : '';
+                if ((updatedStatus === 'INACTIVE' || updatedStatus === 'RESIGNED') && global.onlineUsers) {
                     global.onlineUsers.delete(String(updatedUser.id));
                 }
             } catch (e) {
