@@ -4,6 +4,7 @@ import GuardedModal from "../ui/GuardedModal";
 // ✅ Notice we use 'onMeetingSaved' here, NOT 'onMeetingAdded'
 export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetingDeleted, meetingToEdit = null }) {
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [meetingDate, setMeetingDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -15,6 +16,7 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
       if (meetingToEdit) {
         // Edit Mode
         setTitle(meetingToEdit.title);
+        setDescription(meetingToEdit.description || "");
         const dateObj = new Date(meetingToEdit.meeting_date);
         setMeetingDate(dateObj.toISOString().split('T')[0]);
         setStartTime(meetingToEdit.start_time);
@@ -22,6 +24,7 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
       } else {
         // Add Mode
         setTitle("");
+        setDescription("");
         setMeetingDate("");
         setStartTime("");
         setEndTime("");
@@ -51,6 +54,7 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
         },
         body: JSON.stringify({
           title,
+          description,
           meeting_date: meetingDate,
           start_time: startTime,
           end_time: endTime,
@@ -107,10 +111,10 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
     <GuardedModal
       onDiscard={onClose}
       onSave={() => formRef.current?.requestSubmit()}
-      contentClassName="w-full max-w-[420px] rounded-xl bg-white p-6 shadow-lg dark:bg-slate-900"
+      contentClassName="w-full max-w-[560px] rounded-xl bg-white p-8 shadow-lg dark:bg-slate-900"
     >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">
             {meetingToEdit ? "Edit Meeting" : "Add Meeting"}
           </h2>
           {meetingToEdit && (
@@ -124,19 +128,26 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
           )}
         </div>
 
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-3">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Meeting title"
-            className="w-full dark:bg-slate-800 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full dark:bg-slate-800 border rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
           />
 
+          <textarea
+            placeholder="Meeting description"
+            className="min-h-28 w-full resize-y dark:bg-slate-800 border rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
           <input
             type="date"
-            className="w-full dark:bg-slate-800 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full dark:bg-slate-800 border rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
             value={meetingDate}
             onChange={(e) => setMeetingDate(e.target.value)}
             required
@@ -145,32 +156,32 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
           <div className="flex gap-2">
             <input
               type="time"
-              className="w-full dark:bg-slate-800 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full dark:bg-slate-800 border rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
               required
             />
             <input
               type="time"
-              className="w-full dark:bg-slate-800 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full dark:bg-slate-800 border rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
               required
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-4">
+          <div className="grid grid-cols-2 gap-4 pt-5">
             <button
               type="button"
               onClick={onClose}
-              className="w-full px-4 py-2 text-sm rounded-md dark:bg-slate-800 border hover:bg-gray-50"
+              className="w-full px-4 py-3 text-sm rounded-md dark:bg-slate-800 border hover:bg-gray-50"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 text-sm rounded-md font-semibold disabled:opacity-50"
+              className="w-full px-4 py-3 text-sm rounded-md font-semibold disabled:opacity-50"
               style={{
                 backgroundColor: loading ? "#93c5fd" : "#2563eb",
                 color: "#ffffff",

@@ -8,7 +8,7 @@ import {
 
 export const createMeetingController = async (req, res) => {
   try {
-    const { title, meeting_date, start_time, end_time } = req.body;
+    const { title, description = "", meeting_date, start_time, end_time } = req.body;
 
     if (!title || !meeting_date || !start_time || !end_time) {
       return res.status(400).json({ message: "All fields required" });
@@ -16,6 +16,7 @@ export const createMeetingController = async (req, res) => {
 
     const meeting = await createMeeting({
       title,
+      description,
       meeting_date,
       start_time,
       end_time,
@@ -46,11 +47,12 @@ export const getMeetingsController = async (req, res) => {
 export const updateMeetingController = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, meeting_date, start_time, end_time } = req.body;
+    const { title, description = "", meeting_date, start_time, end_time } = req.body;
 
     // Call the DB function to update
     const updated = await updateMeeting(id, {
       title,
+      description,
       meeting_date,
       start_time,
       end_time

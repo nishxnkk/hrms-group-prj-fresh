@@ -246,7 +246,7 @@ io.on("connection", (socket) => {
     });
 });
 
-import { createMeeting, createMeetingTable, deleteMeeting, getMeetings } from "./models/meeting.model.js";
+import { createMeeting, createMeetingTable, deleteMeeting, getMeetings, updateMeeting } from "./models/meeting.model.js";
 import { updateUserProfile } from "./models/user.model.js";
 import { createTasksTable } from "./models/task.model.js";
 import {
@@ -322,12 +322,25 @@ app.get("/api/meetings", async (req, res) => {
 
 app.post("/api/meetings", async (req, res) => {
     try {
-        const { title, start_time, end_time, type } = req.body;
-        const newMeeting = await createMeeting(title, start_time, end_time, type);
+        const { title, description = "", meeting_date, start_time, end_time } = req.body;
+        const newMeeting = await createMeeting({ title, description, meeting_date, start_time, end_time });
         res.status(201).json(newMeeting);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to create meeting" });
+    }
+});
+
+app.put("/api/meetings/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, description = "", meeting_date, start_time, end_time } = req.body;
+        const updated = await updateMeeting(id, { title, description, meeting_date, start_time, end_time });
+        if (!updated) return res.status(404).json({ error: "Meeting not found" });
+        res.json(updated);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update meeting" });
     }
 });
 
@@ -417,6 +430,7 @@ const initDb = async () => {
     await createOffersTable();
     await createPayrollTable();
     await createMessagesTable();
+    await createMeetingTable();
     await createTasksTable();
     // create points table
     try {

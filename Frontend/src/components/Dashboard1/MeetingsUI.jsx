@@ -167,6 +167,12 @@ export default function MeetingsUI() {
                       </p>
                     </div>
 
+                    {m.description && (
+                      <p className="mt-3 line-clamp-2 text-sm leading-5 text-gray-600 in-[.dark]:text-gray-300">
+                        {m.description}
+                      </p>
+                    )}
+
                     {/* Join Button */}
                     <button className="
                       mt-4 px-4 py-2 rounded-md w-full

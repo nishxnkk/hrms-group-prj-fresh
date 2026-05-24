@@ -6,6 +6,7 @@ export const createMeetingTable = async () => {
       CREATE TABLE IF NOT EXISTS meetings (
         id SERIAL PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
+        description TEXT DEFAULT '',
         meeting_date DATE,
         start_time TIME,
         end_time TIME,
@@ -15,6 +16,7 @@ export const createMeetingTable = async () => {
     `);
 
     // Ensure columns exist for older DBs
+    await pool.query(`ALTER TABLE meetings ADD COLUMN IF NOT EXISTS description TEXT DEFAULT ''`);
     await pool.query(`ALTER TABLE meetings ADD COLUMN IF NOT EXISTS meeting_date DATE`);
     await pool.query(`ALTER TABLE meetings ADD COLUMN IF NOT EXISTS start_time TIME`);
     await pool.query(`ALTER TABLE meetings ADD COLUMN IF NOT EXISTS end_time TIME`);
@@ -25,12 +27,12 @@ export const createMeetingTable = async () => {
 };
 
 export const createMeeting = async (meeting) => {
-  const { title, meeting_date, start_time, end_time, created_by } = meeting;
+  const { title, description = "", meeting_date, start_time, end_time, created_by } = meeting;
 
   const result = await pool.query(
-    `INSERT INTO meetings (title, meeting_date, start_time, end_time, created_by)
-     VALUES ($1,$2,$3,$4,$5) RETURNING *`,
-    [title, meeting_date, start_time, end_time, created_by]
+    `INSERT INTO meetings (title, description, meeting_date, start_time, end_time, created_by)
+     VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+    [title, description, meeting_date, start_time, end_time, created_by]
   );
 
   return result.rows[0];
@@ -45,14 +47,14 @@ export const getMeetings = async () => {
 
 // ✅ NEW: Update an existing meeting
 export const updateMeeting = async (id, meeting) => {
-  const { title, meeting_date, start_time, end_time } = meeting;
+  const { title, description = "", meeting_date, start_time, end_time } = meeting;
   
   const result = await pool.query(
     `UPDATE meetings 
-     SET title = $1, meeting_date = $2, start_time = $3, end_time = $4
-     WHERE id = $5
+     SET title = $1, description = $2, meeting_date = $3, start_time = $4, end_time = $5
+     WHERE id = $6
      RETURNING *`,
-    [title, meeting_date, start_time, end_time, id]
+    [title, description, meeting_date, start_time, end_time, id]
   );
 
   return result.rows[0];
