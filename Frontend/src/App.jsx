@@ -45,6 +45,7 @@ import Applications from "./pages/recruitment/Applications";
 import Interviews from "./pages/recruitment/Interviews";
 import Offers from "./pages/recruitment/Offers";
 import RedemptionPage from './pages/Redeem'
+import DialogProvider from './components/ui/DialogProvider'
 
 
 
@@ -63,7 +64,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <DialogProvider>
       <div>
         <Routes>
           <Route path='/' element={<Navigate to="/login" replace />} />
@@ -108,7 +109,7 @@ function App() {
           <Route path="/appreciation/:id" element={<ProtectedRoute><Layout><AppreciationPage /></Layout></ProtectedRoute>} />
         </Routes>
       </div>
-    </>
+    </DialogProvider>
   )
 }
 

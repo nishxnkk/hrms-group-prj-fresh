@@ -50,18 +50,18 @@ const AppreciationPage = () => {
       fetchComments();
     } catch (err) {
       console.error('Failed to post comment', err);
-      alert('Failed to post comment');
+      window.uiAlert?.('Failed to post comment');
     }
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!window.confirm('Delete this comment?')) return;
+    if (!(await window.uiConfirm?.('Delete this comment?'))) return;
     try {
       await deleteComment(id, commentId);
       fetchComments();
     } catch (err) {
       console.error('Failed to delete comment', err);
-      alert('Failed to delete comment');
+      window.uiAlert?.('Failed to delete comment');
     }
   };
 

@@ -1,22 +1,15 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import coin from "../assets/coin.png";
 import medal from "../assets/medal.png";
 import trophy from "../assets/trophy.png";
-import { focusField } from "../utils/formValidation";
-import toast from 'react-hot-toast';
-import { usePrompt, PromptDialog } from '../components/ui/PromptDialog';
 
 export default function RecognitionPage() {
-  const { prompt, dialogProps: promptDialogProps } = usePrompt();
   const [selectedSection, setSelectedSection] = useState("recipient");
   const [selectedRecipientId, setSelectedRecipientId] = useState(null);
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [recognitions, setRecognitions] = useState([]);
-  const recipientSearchRef = useRef(null);
-  const appreciationTypeRef = useRef(null);
-  const achievementRef = useRef(null);
 
   const fetchData = async () => {
     try {
@@ -108,28 +101,14 @@ export default function RecognitionPage() {
 
   const handleSubmit = async () => {
     if (!selectedRecipientId) {
-      toast.error("Please select a valid recipient from the list");
-      setSelectedSection("recipient");
-      focusField(recipientSearchRef.current);
-      return;
-    }
-    if (!formData.appreciationType) {
-      toast.error("Please select a type of appreciation");
-      setSelectedSection("appreciation");
-      window.setTimeout(() => focusField(appreciationTypeRef.current), 0);
-      return;
-    }
-    if (!formData.achievement.trim()) {
-      toast.error("Please describe the specific achievement");
-      setSelectedSection("appreciation");
-      window.setTimeout(() => focusField(achievementRef.current), 0);
+      window.uiAlert?.("Please select a valid recipient from the list");
       return;
     }
 
 
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
     if (loggedInUser && selectedRecipientId === loggedInUser.id) {
-      toast.error("You cannot appreciate yourself");
+      window.uiAlert?.("You cannot appreciate yourself");
       return;
     }
     try {
@@ -155,7 +134,7 @@ export default function RecognitionPage() {
       });
 
       if (res.status === 401) {
-        toast.error("Session expired. Please login again.");
+        window.uiAlert?.("Session expired. Please login again.");
         localStorage.removeItem("token");
         return;
       }
@@ -165,7 +144,7 @@ export default function RecognitionPage() {
         throw new Error(data.message || "Backend error");
       }
 
-      toast.success("Appreciation sent successfully");
+      window.uiAlert?.("Appreciation sent successfully");
 
       // Refresh the data to show the new appreciation and updated leaderboard
       fetchData();
@@ -183,7 +162,7 @@ export default function RecognitionPage() {
 
     } catch (err) {
       console.error("FULL ERROR:", err);
-      toast.error(err.message || "Something went wrong");
+      window.uiAlert?.(err.message || "Something went wrong");
     }
   };
 
@@ -205,7 +184,6 @@ export default function RecognitionPage() {
         </label>
 
         <input
-          ref={recipientSearchRef}
           type="text"
           value={formData.recipientName}
           onChange={(e) => {
@@ -317,7 +295,6 @@ export default function RecognitionPage() {
           Type of Appreciation
         </label>
         <select
-          ref={appreciationTypeRef}
           name="appreciationType"
           value={formData.appreciationType}
           onChange={handleChange}
@@ -337,7 +314,6 @@ export default function RecognitionPage() {
           Specific Achievement
         </label>
         <textarea
-          ref={achievementRef}
           name="achievement"
           value={formData.achievement}
           onChange={handleChange}
@@ -470,25 +446,23 @@ export default function RecognitionPage() {
   };
 
   const grantPoints = async (userId) => {
-    const amtStr = await prompt('Enter points to grant (positive integer)', '');
-    const amt = parseInt(amtStr, 10);
+    const amt = parseInt(await window.uiPrompt?.('Enter points to grant (positive integer)'), 10);
     if (!amt || isNaN(amt)) return;
-    const reason = await prompt('Optional reason for points', '') || '';
+    const reason = await window.uiPrompt?.('Optional reason for points') || '';
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${base}/api/admin/users/${userId}/points`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' }, body: JSON.stringify({ amount: amt, reason }) });
-      if (!res.ok) { toast.error('Failed to grant points'); return; }
+      if (!res.ok) { window.uiAlert?.('Failed to grant points'); return; }
       fetchData();
       window.dispatchEvent(new CustomEvent('activity:updated'));
-      toast.success('Points granted');
-    } catch (err) { console.error('Grant points failed', err); toast.error('Failed to grant points'); }
+      window.uiAlert?.('Points granted');
+    } catch (err) { console.error('Grant points failed', err); window.uiAlert?.('Failed to grant points'); }
   };
 
 
 
   return (
     <div>
-      <PromptDialog {...promptDialogProps} />
       <div className="p-6">
         {/* MAIN GRID */}
         <div className="grid grid-cols-[340px_1fr] gap-8">

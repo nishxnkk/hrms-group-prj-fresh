@@ -156,13 +156,13 @@ const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateFor
     };
 
     const handleDelete = async (appreciationId) => {
-        if (window.confirm('Are you sure you want to delete this appreciation?')) {
+        if (await window.uiConfirm?.('Are you sure you want to delete this appreciation?')) {
             try {
                 await deleteAppreciation(appreciationId);
                 setAppreciations(prev => prev.filter(a => a.id !== appreciationId));
                 try { window.dispatchEvent(new CustomEvent('activity:updated')); } catch (e) { }
             } catch (err) {
-                alert('Failed to delete appreciation. You can only delete your own posts.');
+                window.uiAlert?.('Failed to delete appreciation. You can only delete your own posts.');
                 console.error(err);
             }
         }
@@ -190,7 +190,7 @@ const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateFor
                 fetchComments(appreciationId);
             }
         } catch (err) {
-            alert('Failed to add comment');
+            window.uiAlert?.('Failed to add comment');
             console.error(err);
         }
     };

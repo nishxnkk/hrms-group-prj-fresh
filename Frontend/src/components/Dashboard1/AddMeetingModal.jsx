@@ -1,5 +1,4 @@
-import { useRef, useState, useEffect } from "react";
-import { focusFirstInvalid, handleInvalidCapture } from "../../utils/formValidation";
+import { useState, useEffect } from "react";
 
 // ✅ Notice we use 'onMeetingSaved' here, NOT 'onMeetingAdded'
 export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetingDeleted, meetingToEdit = null }) {
@@ -8,7 +7,6 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [loading, setLoading] = useState(false);
-  const formRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -33,7 +31,6 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (focusFirstInvalid(formRef.current)) return;
     setLoading(true);
 
     try {
@@ -72,14 +69,14 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
       onClose();
 
     } catch (err) {
-      alert(err.message);
+      window.uiAlert?.(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to cancel this meeting?")) return;
+    if (!(await window.uiConfirm?.("Are you sure you want to cancel this meeting?"))) return;
 
     setLoading(true);
     try {
@@ -98,15 +95,15 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
       onClose();
 
     } catch (err) {
-      alert(err.message);
+      window.uiAlert?.(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div class Name="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-slate-900 w-[420px] rounded-xl shadow-lg p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="w-full max-w-[420px] rounded-xl bg-white p-6 shadow-lg dark:bg-slate-900">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">
             {meetingToEdit ? "Edit Meeting" : "Add Meeting"}
@@ -122,7 +119,7 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
           )}
         </div>
 
-        <form ref={formRef} onInvalidCapture={handleInvalidCapture} onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <input
             type="text"
             placeholder="Meeting title"
@@ -157,20 +154,29 @@ export default function MeetingModal({ isOpen, onClose, onMeetingSaved, onMeetin
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+          <div className="grid grid-cols-2 gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm rounded-md dark:bg-slate-800 border hover:bg-gray-50"
+              className="w-full px-4 py-2 text-sm rounded-md dark:bg-slate-800 border hover:bg-gray-50"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm rounded-md dark:bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              className="w-full px-4 py-2 text-sm rounded-md font-semibold disabled:opacity-50"
+              style={{
+                backgroundColor: loading ? "#93c5fd" : "#2563eb",
+                color: "#ffffff",
+                border: "1px solid #1d4ed8",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "42px",
+              }}
             >
-              {loading ? "Saving..." : "Save Changes"}
+              {loading ? "Saving..." : meetingToEdit ? "Save Changes" : "Save Meeting"}
             </button>
           </div>
         </form>

@@ -2,13 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import people from "../../assets/people.png";
 import { Heart, LogOut, Settings, UserPlus, User, } from "lucide-react";
-import toast from 'react-hot-toast';
-import { useConfirm, ConfirmDialog } from '../ui/ConfirmDialog';
-import { usePrompt, PromptDialog } from '../ui/PromptDialog';
 
 const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
-  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
-  const { prompt, dialogProps: promptDialogProps } = usePrompt();
   const [user, setUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null");
@@ -123,8 +118,6 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
 
   return (
     <div className="min-h-screen from-gray-100 to-gray-200 dark:bg-slate-800 dark:from-slate-900 dark:to-slate-800 dark:text-gray-100 p-6 sm:p-10">
-      <ConfirmDialog {...confirmDialogProps} />
-      <PromptDialog {...promptDialogProps} />
       <div className="w-full mx-auto">
         {/* HEADER */}
         <div className="flex justify-between">
@@ -192,28 +185,28 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                         </button>
 
                         <button onClick={async () => {
-                          const ok = await confirm('Are you sure you want to resign? This will archive and delete your account and log you out.');
-                          if (!ok) return;
+                          if (!(await window.uiConfirm?.('Are you sure you want to resign? This will archive and delete your account and log you out.'))) return;
                           try {
-                            const reason = await prompt('Please provide a reason for resignation (optional):', '');
+                            const reason = await window.uiPrompt?.('Please provide a reason for resignation (optional):');
                             const token = localStorage.getItem('token');
                             const uid = user?.id;
-                            if (!token || !uid) { toast.error('Not authenticated'); return; }
+                            if (!token || !uid) return window.uiAlert?.('Not authenticated');
                             const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/users/${uid}`, {
                               method: 'PUT',
                               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                               body: JSON.stringify({ status: 'Resigned', resignation_reason: reason })
                             });
                             if (res.ok) {
+                              // log out after resignation
                               const { logout } = await import('../../services/auth.service.js');
                               await logout();
                             } else {
                               const err = await res.json().catch(() => null);
-                              toast.error(err?.message || 'Failed to resign');
+                              window.uiAlert?.(err?.message || 'Failed to resign');
                             }
                           } catch (err) {
                             console.error('Resign failed', err);
-                            toast.error('Error processing resignation');
+                            window.uiAlert?.('Error processing resignation');
                           }
                         }} className="mt-3 bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm font-medium shadow-sm hover:bg-red-200 active:scale-95 transition cursor-pointer">
                           Resign

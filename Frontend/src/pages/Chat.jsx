@@ -159,7 +159,7 @@ const Chat = () => {
         } catch (err) {
           if (err.response && err.response.status === 401) {
             if (err.response.data && err.response.data.message === "Token expired") {
-              alert("Session expired. Please log in again.");
+              window.uiAlert?.("Session expired. Please log in again.");
             }
             // Token invalid/expired - force logout
             localStorage.removeItem('token');
@@ -506,7 +506,7 @@ const Chat = () => {
   };
 
   const handleDeleteMessage = async (msgId, receiverId) => {
-    if (!window.confirm("Delete this message?")) return;
+    if (!(await window.uiConfirm?.("Delete this message?"))) return;
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`${API_BASE}/api/messages/${msgId}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -723,8 +723,8 @@ const Chat = () => {
                     {/* Action Menu (Hover) */}
                     {msg.sender === "me" && !msg.is_deleted && (
                       <div className="absolute top-2 right-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white dark:bg-[#262626] shadow-md rounded-lg p-1 border border-gray-100 dark:border-[#1F2429]">
-                        <button onClick={() => {
-                          const newText = prompt("Edit message:", msg.text);
+                        <button onClick={async () => {
+                          const newText = await window.uiPrompt?.("Edit message:", msg.text);
                           if (newText && newText !== msg.text) handleEditMessage(msg.id, newText, selectedChat);
                         }} className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#1F2429] rounded text-gray-400" title="Edit">
                           <Edit2 size={14} />

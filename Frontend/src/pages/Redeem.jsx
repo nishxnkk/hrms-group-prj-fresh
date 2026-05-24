@@ -72,7 +72,7 @@ const RedemptionPage = () => {
   }, []);
 
   const handleRedeem = async (item) => {
-    if (!confirm(`Redeem ${item.title} for ${item.cost.toLocaleString()} pts?`)) return;
+    if (!(await window.uiConfirm?.(`Redeem ${item.title} for ${item.cost.toLocaleString()} pts?`))) return;
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${base}/api/redeem/purchase`, {
@@ -83,7 +83,7 @@ const RedemptionPage = () => {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.message || 'Failed to redeem');
+        window.uiAlert?.(data.message || 'Failed to redeem');
         return;
       }
 

@@ -1,12 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAllEvents, createEvent as createEventAPI, registerForEvent, deleteEvent as deleteEventAPI, getUserEvents } from '../services/event.service';
-import { focusFirstInvalid, handleInvalidCapture } from '../utils/formValidation';
-import toast from 'react-hot-toast';
-import { useConfirm, ConfirmDialog } from '../components/ui/ConfirmDialog';
 
 const ProfessionalEventsPage = () => {
   // --- 1. STATE DEFINITIONS (Moved INSIDE the component) ---
-  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
   const [activeTab, setActiveTab] = useState('all');
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
@@ -14,8 +10,6 @@ const ProfessionalEventsPage = () => {
   const [joinedEvents, setJoinedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const joinFormRef = useRef(null);
-  const createFormRef = useRef(null);
 
   // Join Form State
   const [joinForm, setJoinForm] = useState({
@@ -121,11 +115,10 @@ const ProfessionalEventsPage = () => {
 
   const handleJoinSubmit = async (e) => {
     e.preventDefault();
-    if (focusFirstInvalid(joinFormRef.current)) return;
     if (!selectedEvent) return;
 
     if (isEventJoined(selectedEvent.id)) {
-      toast.error('You are already registered for this event');
+      alert('You are already registered for this event');
       setShowJoinModal(false);
       return;
     }
@@ -137,13 +130,13 @@ const ProfessionalEventsPage = () => {
         try { localStorage.setItem('joinedEvents', JSON.stringify(next)); } catch (e) { }
         return next;
       });
-      toast.success(`Successfully registered for: ${selectedEvent.title}`);
+      alert(`Successfully registered for: ${selectedEvent.title}\n\nWe've sent confirmation to ${joinForm.email}`);
       setShowJoinModal(false);
       setJoinForm({ name: '', email: '', company: '', position: '' });
       fetchEvents();
       try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
     } catch (error) {
-      toast.error(`Failed to register: ${error.message}`);
+      alert(`Failed to register: ${error.message}`);
     }
   };
 
@@ -153,7 +146,6 @@ const ProfessionalEventsPage = () => {
 
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
-    if (focusFirstInvalid(createFormRef.current)) return;
     try {
       const eventData = {
         title: newEvent.title,
@@ -180,11 +172,11 @@ const ProfessionalEventsPage = () => {
         max_attendees: 100
       });
       setShowCreateEventModal(false);
-      toast.success('Event created successfully!');
+      window.uiAlert?.('Event created successfully!');
       fetchEvents();
       try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
     } catch (error) {
-      toast.error(`Failed to create event: ${error.message}`);
+      window.uiAlert?.(`Failed to create event: ${error.message}`);
     }
   };
 
@@ -197,15 +189,15 @@ const ProfessionalEventsPage = () => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    const ok = await confirm('Are you sure you want to delete this event? This action cannot be undone.');
-    if (!ok) return;
-    try {
-      await deleteEventAPI(eventId);
-      toast.success('Event deleted successfully');
-      fetchEvents();
-      try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
-    } catch (error) {
-      toast.error(`Failed to delete event: ${error.message}`);
+    if (await window.uiConfirm?.('Are you sure you want to delete this event? This action cannot be undone.')) {
+      try {
+        await deleteEventAPI(eventId);
+        window.uiAlert?.('Event deleted successfully');
+        fetchEvents();
+        try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
+      } catch (error) {
+        window.uiAlert?.(`Failed to delete event: ${error.message}`);
+      }
     }
   };
 
@@ -224,7 +216,6 @@ const ProfessionalEventsPage = () => {
   // --- 5. RENDER ---
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-800">
-      <ConfirmDialog {...confirmDialogProps} />
 
       {/* Join Event Modal (Added Blur here too for consistency) */}
       {showJoinModal && selectedEvent && (
@@ -247,7 +238,7 @@ const ProfessionalEventsPage = () => {
               <p className="text-sm text-gray-600 dark:text-slate-400">{selectedEvent.date} • {selectedEvent.location}</p>
             </div>
 
-            <form ref={joinFormRef} onInvalidCapture={handleInvalidCapture} onSubmit={handleJoinSubmit}>
+            <form onSubmit={handleJoinSubmit}>
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Full Name *</label>
@@ -331,7 +322,7 @@ const ProfessionalEventsPage = () => {
                 </svg>
               </button>
             </div>
-            <form ref={createFormRef} onInvalidCapture={handleInvalidCapture} onSubmit={handleSubmitEvent}>
+            <form onSubmit={handleSubmitEvent}>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">Event Title</label>

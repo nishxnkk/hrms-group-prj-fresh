@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -6,12 +6,8 @@ import { Table, TableHeader, TableRow, TableHead, TableCell } from "../../compon
 import Skeleton from "../../components/ui/Skeleton";
 import EmptyState from "../../components/ui/EmptyState";
 import { Fragment } from "react";
-import { focusFirstInvalid, handleInvalidCapture } from "../../utils/formValidation";
-import toast from 'react-hot-toast';
-import { useConfirm, ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
 export default function Jobs() {
-  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
   const [jobs, setJobs] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [form, setForm] = useState({
@@ -26,8 +22,6 @@ export default function Jobs() {
   const [applicant, setApplicant] = useState({ name: "", email: "", coverLetter: "" });
   const [resumeFile, setResumeFile] = useState(null);
   const [resumePreview, setResumePreview] = useState(null);
-  const jobFormRef = useRef(null);
-  const applicationFormRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -63,7 +57,6 @@ export default function Jobs() {
 
   const submitJob = async (e) => {
     e.preventDefault();
-    if (focusFirstInvalid(jobFormRef.current)) return;
     await axios.post(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/jobs`, form);
     setForm({ title: "", location: "", experience: "", salary: "" });
     fetchJobs();
@@ -96,7 +89,6 @@ export default function Jobs() {
 
   const submitApplication = async (e) => {
     e.preventDefault();
-    if (focusFirstInvalid(applicationFormRef.current)) return;
     if (!selectedJob) return;
     const fd = new FormData();
     fd.append('name', applicant.name);
@@ -109,23 +101,27 @@ export default function Jobs() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       closeApply();
-      toast.success('Application submitted');
+      window.uiAlert?.('Application submitted');
     } catch (err) {
       console.error(err);
-      toast.error('Failed to submit application');
+      window.uiAlert?.('Failed to submit application');
     }
   };
 
   // ✅ DELETE JOB
   const deleteJob = async (id) => {
     if (!isAdmin) return;
-    const ok = await confirm("Are you sure you want to delete this job?");
-    if (!ok) return;
+    const confirmDelete = await window.uiConfirm?.(
+      "Are you sure you want to delete this job?"
+    );
+
+    if (!confirmDelete) return;
+
     try {
       await axios.delete(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/jobs/${id}`);
       fetchJobs();
     } catch (err) {
-      toast.error("Failed to delete job");
+      window.uiAlert?.("Failed to delete job");
     }
   };
 
@@ -149,7 +145,7 @@ export default function Jobs() {
       {isAdmin && (
         <Card className="dark:bg-slate-900">
           <h2 className="text-lg font-semibold mb-6 text-gray-900 dark:text-slate-100">Post a New Job</h2>
-          <form ref={jobFormRef} onInvalidCapture={handleInvalidCapture} onSubmit={submitJob}>
+          <form onSubmit={submitJob}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 dark:text-slate-100">Job Title</label>
@@ -281,7 +277,7 @@ export default function Jobs() {
               <button onClick={closeApply} className="text-gray-500">Close</button>
             </div>
 
-            <form ref={applicationFormRef} onInvalidCapture={handleInvalidCapture} onSubmit={submitApplication} className="space-y-4">
+            <form onSubmit={submitApplication} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input required placeholder="Full name" value={applicant.name} onChange={(e) => setApplicant({ ...applicant, name: e.target.value })} className="px-3 py-2 border rounded" />
                 <input required placeholder="Email" value={applicant.email} onChange={(e) => setApplicant({ ...applicant, email: e.target.value })} className="px-3 py-2 border rounded" />

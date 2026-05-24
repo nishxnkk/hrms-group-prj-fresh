@@ -1,15 +1,9 @@
-import React, { useRef, useState } from 'react';
-import { Search, Filter, Save, X, ArrowLeft, Calendar, DollarSign, Users, Briefcase } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Filter, Save, X, ChevronRight, ArrowLeft, Calendar, DollarSign, Users, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { focusField } from '../utils/formValidation';
-import toast from 'react-hot-toast';
-import { useConfirm, ConfirmDialog } from '../components/ui/ConfirmDialog';
-import { usePrompt, PromptDialog } from '../components/ui/PromptDialog';
 
 const Promotion = () => {
   const navigate = useNavigate();
-  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
-  const { prompt, dialogProps: promptDialogProps } = usePrompt();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('All');
@@ -21,7 +15,6 @@ const Promotion = () => {
   const [reason, setReason] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingPromotions, setLoadingPromotions] = useState(false);
-  const newRoleRef = useRef(null);
   
 
   const [employees, setEmployees] = useState([]);
@@ -89,16 +82,15 @@ const Promotion = () => {
 
   const savePromotion = async () => {
     if (!isAdmin) {
-      toast.error('Only admins can save promotions');
+      window.uiAlert?.('Only admins can save promotions');
       return;
     }
     if (!selectedEmployee) {
-      toast.error('Please select an employee');
+      window.uiAlert?.('Please select an employee');
       return;
     }
     if (!newRole) {
-      toast.error('Please select a new role');
-      focusField(newRoleRef.current);
+      window.uiAlert?.('Please select a new role');
       return;
     }
 
@@ -112,35 +104,35 @@ const Promotion = () => {
 
       const json = await res.json();
       if (!res.ok) {
-        toast.error(json.message || 'Failed to save promotion');
+        window.uiAlert?.(json.message || 'Failed to save promotion');
         return;
       }
 
-      toast.success('Promotion saved');
+      window.uiAlert?.('Promotion saved');
       setNewRole(''); setNewSalary(''); setReason('');
       fetchPromotions();
     } catch (err) {
       console.error('Save promotion failed', err);
-      toast.error('Failed to save promotion');
+      window.uiAlert?.('Failed to save promotion');
     }
   };
 
   const applyToPromotion = async (promotionId) => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) { toast.error('Please login'); return; }
-      const cover = await prompt('Enter a short cover note (optional)', '') || '';
+      if (!token) { window.uiAlert?.('Please login'); return; }
+      const cover = await window.uiPrompt?.('Enter a short cover note (optional)') || '';
       const res = await fetch(`${apiBase}/api/promotions/${promotionId}/apply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ cover_letter: cover })
       });
       const json = await res.json();
-      if (!res.ok) { toast.error(json.message || 'Apply failed'); return; }
-      toast.success('Application submitted');
+      if (!res.ok) { window.uiAlert?.(json.message || 'Apply failed'); return; }
+      window.uiAlert?.('Application submitted');
     } catch (err) {
       console.error('Apply failed', err);
-      toast.error('Apply failed');
+      window.uiAlert?.('Apply failed');
     }
   };
 
@@ -160,7 +152,7 @@ const Promotion = () => {
         setViewingPromotionId(promotionId);
       } else {
         const json = await res.json();
-        toast.error(json.message || 'Failed to fetch applications');
+        window.uiAlert?.(json.message || 'Failed to fetch applications');
       }
     } catch (err) {
       console.error('Failed to fetch applications', err);
@@ -172,29 +164,27 @@ const Promotion = () => {
   const updateApplicationStatus = async (promotionId, appId, status) => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) { toast.error('Please login'); return; }
+      if (!token) { window.uiAlert?.('Please login'); return; }
       const res = await fetch(`${apiBase}/api/promotions/${promotionId}/applications/${appId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status })
       });
       const json = await res.json();
-      if (!res.ok) { toast.error(json.message || 'Failed to update'); return; }
-      toast.success('Application updated');
+      if (!res.ok) { window.uiAlert?.(json.message || 'Failed to update'); return; }
+      window.uiAlert?.('Application updated');
       // Refresh apps, promotions and employee data
       fetchApplications(promotionId);
       fetchPromotions();
       fetchEmployees();
     } catch (err) {
       console.error('Failed to update application', err);
-      toast.error('Failed to update application');
+      window.uiAlert?.('Failed to update application');
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-      <ConfirmDialog {...confirmDialogProps} />
-      <PromptDialog {...promptDialogProps} />
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-8">
@@ -206,6 +196,8 @@ const Promotion = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-8 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+            <h2 className="text-3xl font-bold text-gray-900">HRMS</h2>
+            <ChevronRight className="text-gray-400" size={20} />
             <h3 className="text-xl font-semibold text-blue-600">Employee Promotion</h3>
           </div>
           <p className="text-gray-600 mt-2">Review and update employee promotion details</p>
@@ -460,7 +452,7 @@ const Promotion = () => {
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
                           New Role
                         </label>
-                        <select ref={newRoleRef} value={newRole} onChange={(e)=>setNewRole(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <select value={newRole} onChange={(e)=>setNewRole(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                           <option value="">Select Role</option>
                           <option>Senior Software Engineer</option>
                           <option>Senior Sales Executive</option>
