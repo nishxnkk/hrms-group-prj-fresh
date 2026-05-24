@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  font-family: 'Inter', sans-serif;
+  --rn-bg: #fff7f1;
+  --rn-surface: #ffffff;
+  --rn-soft: #fbe7df;
+  --rn-border: #efc9bd;
+  --rn-primary: #b8322b;
+  --rn-primary-hover: #94231f;
+  --rn-primary-dark: #651b1b;
+  --rn-ink: #2b1b1b;
+  --rn-muted: #7b5f5b;
+  --rn-gold: #c88732;
+  --rn-focus: rgba(184, 50, 43, 0.24);
+}
+
+body {
+  background-color: var(--rn-bg);
+  color: var(--rn-ink);
+}
+
+.dark body {
+  background-color: #211313;
+  color: #fff7f1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom Scrollbar for Webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  /* slate-300 */
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  /* slate-400 */
+}
+
+/* Global Font Smoothing */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* RedNote-inspired application palette */
+.bg-\[\#020839\],
+.bg-\[\#266ECD\],
+.bg-\[\#0066FF\],
+.bg-\[\#2C50AB\],
+.bg-\[\#4a2cf0\],
+.bg-blue-600 {
+  background-color: var(--rn-primary) !important;
+}
+
+.hover\:bg-blue-700:hover,
+.hover\:bg-\[\#3a20d1\]:hover,
+.hover\:bg-\[\#3b62c7\]:hover {
+  background-color: var(--rn-primary-hover) !important;
+}
+
+.text-\[\#020839\],
+.text-\[\#266ECD\],
+.text-blue-600,
+.text-blue-700,
+.text-purple-700 {
+  color: var(--rn-primary) !important;
+}
+
+.border-\[\#88AAFF\],
+.border-blue-500,
+.focus\:border-blue-500:focus,
+.focus\:border-\[\#020839\]:focus {
+  border-color: var(--rn-primary) !important;
+}
+
+.focus\:ring-\[\#020839\]:focus,
+.focus\:ring-\[\#266ECD\]:focus,
+.focus\:ring-blue-500:focus,
+.focus\:ring-blue-600:focus,
+.focus\:ring-purple-400:focus,
+.focus\:ring-green-500:focus {
+  --tw-ring-color: var(--rn-focus) !important;
+}
+
+.bg-gray-50 {
+  background-color: var(--rn-bg) !important;
+}
+
+.bg-white {
+  background-color: var(--rn-surface) !important;
+}
+
+.border-gray-100,
+.border-gray-200,
+.border-gray-300 {
+  border-color: var(--rn-border) !important;
+}
+
+.text-gray-500,
+.text-gray-600,
+.text-slate-500 {
+  color: var(--rn-muted) !important;
+}
+
+.dark .dark\:bg-slate-800,
+.dark .dark\:bg-slate-900,
+.dark .dark\:bg-\[\#020839\],
+.dark .dark\:bg-\[\#1F2429\],
+.dark .dark\:bg-\[\#0C1014\] {
+  background-color: #2a1717 !important;
+}
+
+.dark .dark\:text-\[\#AACCFF\],
+.dark .dark\:text-\[\#88AAFF\],
+.dark .dark\:text-\[\#4dabf7\] {
+  color: #ffd6cc !important;
+}
