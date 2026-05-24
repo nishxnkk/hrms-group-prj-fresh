@@ -3,16 +3,12 @@ import Sidebar from "./Sidebar";
 
 function Layout({ children }) {
   return (
-    <div className="flex min-h-screen bg-[var(--rn-bg)] dark:bg-[#211313]">
-      {/* SIDEBAR */}
+    <div className="app-shell min-h-screen bg-[var(--rn-bg)] dark:bg-[#211313]">
       <Sidebar />
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 ml-64 flex flex-col min-h-screen">
-
-        {/* PAGE CONTENT */}
-        <div className="">{children}</div>
-      </div>
+      <main className="app-main min-h-screen">
+        {children}
+      </main>
     </div>
   );
 }

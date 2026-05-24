@@ -23,7 +23,6 @@ function Sidebar() {
 
   const fullname = user?.fullname || "Mariya";
   const designation = user?.designation || "HR Manager";
-  const email = user?.email || "";
   const avatarSrc = user?.profile_picture;
 
   const [taskStats, setTaskStats] = useState({ completed: 0, remaining: 0, overdue: 0, total: 0 });
@@ -96,21 +95,19 @@ function Sidebar() {
   }, []);
 
   return (
-    <aside className="w-64 h-screen fixed left-0 top-0 bg-[linear-gradient(180deg,#6f1d1b_0%,#3a1716_100%)] text-[#fff7f1] p-6 shadow-xl shadow-red-950/20">
+    <aside className="app-sidebar fixed left-0 top-0 z-30 h-screen w-64 bg-[linear-gradient(180deg,#6f1d1b_0%,#3a1716_100%)] text-[#fff7f1] shadow-xl shadow-red-950/20">
 
-      {/* LOGO */}
-      <h1 className="text-2xl font-bold mb-8 leading-tight tracking-wide">RedNote PayRoll System</h1>
+      <h1 className="app-brand text-2xl font-bold leading-tight tracking-wide">RedNote PayRoll System</h1>
 
-      {/* PROFILE */}
-      <div className="flex items-center gap-3 mb-10">
+      <div className="app-profile flex items-center gap-3">
         {avatarSrc ? (
           <img
             src={avatarSrc}
-            className="w-14 h-14 rounded-full object-cover border-2 border-white/20"
+            className="app-avatar rounded-full object-cover border-2 border-white/20"
             alt={fullname}
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-white/80 border-2 border-white/20">
+          <div className="app-avatar rounded-full bg-white/10 flex items-center justify-center text-white/80 border-2 border-white/20">
             <User size={24} />
           </div>
         )}
@@ -121,15 +118,14 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* MENU */}
-      <ul className="flex flex-col gap-2">
+      <ul className="app-nav flex flex-col gap-2">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <li key={item.name}>
               <Link
                 to={item.path}
-              className={`block px-4 py-2 rounded-lg font-medium ${isActive
+                className={`app-nav-link block rounded-lg font-medium ${isActive
                   ? "bg-[#fff7f1] text-[#6f1d1b]"
                   : "text-[#ffe7df] hover:bg-white/12"
                   }`}
@@ -144,7 +140,7 @@ function Sidebar() {
         <li>
           <Link
             to={tasksLink}
-            className={`block px-4 py-2 rounded-lg font-medium ${tasksActive
+            className={`app-nav-link block rounded-lg font-medium ${tasksActive
               ? "bg-[#fff7f1] text-[#6f1d1b]"
               : "text-[#ffe7df] hover:bg-white/12"
               }`}

@@ -20,6 +20,7 @@
 body {
   background-color: var(--rn-bg);
   color: var(--rn-ink);
+  min-width: 320px;
 }
 
 .dark body {
@@ -68,6 +69,55 @@ body {
 
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-out;
+}
+
+.app-shell {
+  display: flex;
+}
+
+.app-sidebar {
+  padding: 1.5rem;
+}
+
+.app-brand {
+  margin-bottom: 2rem;
+}
+
+.app-profile {
+  margin-bottom: 2.5rem;
+}
+
+.app-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 3.5rem;
+}
+
+.app-nav-link {
+  min-height: 2.5rem;
+  padding: 0.625rem 1rem;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.app-main {
+  flex: 1;
+  margin-left: 16rem;
+  min-width: 0;
+}
+
+.app-main > * {
+  min-width: 0;
+}
+
+.app-main table {
+  min-width: 720px;
+}
+
+.app-main input,
+.app-main select,
+.app-main textarea,
+.app-main button {
+  max-width: 100%;
 }
 
 /* RedNote-inspired application palette */
@@ -142,4 +192,116 @@ body {
 .dark .dark\:text-\[\#88AAFF\],
 .dark .dark\:text-\[\#4dabf7\] {
   color: #ffd6cc !important;
+}
+
+@media (max-width: 1180px) {
+  .app-sidebar {
+    width: 14rem;
+    padding: 1.25rem;
+  }
+
+  .app-main {
+    margin-left: 14rem;
+  }
+
+  .app-brand {
+    font-size: 1.25rem;
+  }
+
+  .app-nav-link {
+    padding-inline: 0.875rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    display: block;
+  }
+
+  .app-sidebar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: auto;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid rgba(255, 247, 241, 0.16);
+  }
+
+  .app-main {
+    margin-left: 0;
+  }
+
+  .app-brand {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  .app-profile {
+    display: none;
+  }
+
+  .app-nav {
+    flex-direction: row;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.125rem;
+    scrollbar-width: none;
+  }
+
+  .app-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app-nav > li {
+    flex: 0 0 auto;
+  }
+
+  .app-nav-link {
+    min-height: 2.25rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .app-main > * {
+    padding-inline: 1rem;
+  }
+
+  .app-main .grid {
+    gap: 1rem;
+  }
+
+  .app-main table {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-sidebar {
+    padding-inline: 0.75rem;
+  }
+
+  .app-main > * {
+    padding-inline: 0.75rem;
+  }
+
+  .app-main h1 {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+    line-height: 1.15;
+  }
+
+  .app-main h2 {
+    font-size: clamp(1.125rem, 6vw, 1.5rem);
+  }
+
+  .app-main input,
+  .app-main select,
+  .app-main textarea {
+    font-size: 16px;
+  }
+
+  .app-main button {
+    min-height: 2.5rem;
+  }
 }
