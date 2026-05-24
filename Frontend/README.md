@@ -4,7 +4,7 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 ## Backend URL configuration 🔧
 
-The frontend will use the environment variable `VITE_API_BASE` as the API base URL. To point the frontend to the deployed backend on Render, create a `.env` file in the `Hr/` folder with:
+The frontend will use the environment variable `VITE_API_BASE` as the API base URL. To point the frontend to the deployed backend on Render, create a `.env` file in the `Frontend/` folder with:
 
 ```
 VITE_API_BASE=https://hrms-group-prj.onrender.com
@@ -15,7 +15,7 @@ When `VITE_API_BASE` is not set, components fall back to `http://localhost:3000`
 ## Netlify SPA routing fix 🔁
 If you deploy this app to Netlify, refreshing on client-side routes can return a 404. To fix this, we include a `_redirects` file that rewrites all requests to `index.html` so the SPA router can handle the URL:
 
-- File: `Hr/public/_redirects`
+- File: `Frontend/public/_redirects`
 - Contents: `/* /index.html 200`
 
 Netlify will copy this into the published site during build and handle client-side route refreshes correctly.

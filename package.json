@@ -5,15 +5,15 @@
   "description": "RedNote PayRoll System with a React frontend and Express/Postgres backend.",
   "workspaces": [
     "Backend",
-    "Hr"
+    "Frontend"
   ],
   "scripts": {
-    "install:all": "npm ci --prefix Backend && npm ci --prefix Hr",
+    "install:all": "npm ci --prefix Backend && npm ci --prefix Frontend",
     "dev:backend": "npm run dev --prefix Backend",
-    "dev:frontend": "npm run dev --prefix Hr",
-    "build": "npm run build --prefix Hr",
+    "dev:frontend": "npm run dev --prefix Frontend",
+    "build": "npm run build --prefix Frontend",
     "test": "npm test --prefix Backend",
-    "lint": "npm run lint --prefix Hr"
+    "lint": "npm run lint --prefix Frontend"
   },
   "engines": {
     "node": ">=20"
