@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "./Sidebar";
+import TopNavbar from "./TopNavbar";
 
 function Layout({ children }) {
   return (
@@ -7,6 +8,7 @@ function Layout({ children }) {
       <Sidebar />
 
       <main className="app-main min-h-screen">
+        <TopNavbar />
         {children}
       </main>
     </div>
