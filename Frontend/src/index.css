@@ -77,6 +77,27 @@ body {
 
 .app-sidebar {
   padding: 1.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(255, 247, 241, 0.38) transparent;
+  scrollbar-width: thin;
+}
+
+.app-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.app-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 247, 241, 0.28);
+  border-radius: 9999px;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 247, 241, 0.48);
 }
 
 .app-brand {
@@ -260,6 +281,7 @@ body {
     flex-direction: row;
     gap: 0.5rem;
     overflow-x: auto;
+    overflow-y: hidden;
     padding-bottom: 0.125rem;
     scrollbar-width: none;
   }
