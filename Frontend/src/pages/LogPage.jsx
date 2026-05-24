@@ -22,7 +22,7 @@ export default function LogPage() {
     e.preventDefault();
     let isValid = true;
 
-    if (username.trim().length < 3) {
+    if (!username.trim()) {
       setUsernameError(true);
       isValid = false;
     } else {
@@ -86,12 +86,11 @@ export default function LogPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                minLength={3}
                 className="w-full rounded-lg border border-[var(--rn-border)] bg-white px-4 py-3 text-sm text-[var(--rn-ink)] outline-none transition focus:border-[var(--rn-primary)] focus:ring-4 focus:ring-[var(--rn-focus)] dark:border-white/10 dark:bg-[#211313] dark:text-white"
                 autoComplete="username"
                 placeholder="Enter username"
               />
-              {usernameError && <p className="text-red-500 text-xs mt-1">Username must be at least 3 characters long.</p>}
+              {usernameError && <p className="text-red-500 text-xs mt-1">Username is required.</p>}
 
               <label className="text-sm font-semibold text-[var(--rn-ink)] dark:text-[#fff7f1]">Password</label>
               <div className="relative">

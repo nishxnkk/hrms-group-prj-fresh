@@ -41,8 +41,7 @@ const SignUp = () => {
   const validate = () => {
     const newErrors = { name: "", username: "", email: "", password: "", designation: "", phone: "" };
     if (name.trim().length < 3) newErrors.name = "Name must be at least 3 characters long.";
-    const usernamePattern = /^[a-zA-Z0-9_]{3,30}$/;
-    if (!usernamePattern.test(username.trim())) newErrors.username = "Username must be 3-30 letters, numbers, or underscores.";
+    if (!username.trim()) newErrors.username = "Username is required.";
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email.trim())) newErrors.email = "Please enter a valid email address.";
     if (password.trim().length < 8) newErrors.password = "Password must be at least 8 characters long.";
@@ -186,7 +185,7 @@ const SignUp = () => {
 
               <div>
                 <label htmlFor="username" className="block text-sm font-semibold mb-1 text-black">Username</label>
-                <input ref={fieldRefs.username} id="username" name="username" type="text" required minLength={3} maxLength={30} pattern="[A-Za-z0-9_]{3,30}" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" placeholder="Choose a username" autoComplete="username" />
+                <input ref={fieldRefs.username} id="username" name="username" type="text" required value={username} onChange={(e) => setUsername(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" placeholder="Choose a username" autoComplete="username" />
                 {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
               </div>
 

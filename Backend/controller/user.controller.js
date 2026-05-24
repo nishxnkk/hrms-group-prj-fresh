@@ -7,11 +7,7 @@ import pool from "../db/db.js";
 
 const makeUsername = (body) => {
     const source = body.username || (body.email ? body.email.split("@")[0] : body.fullname);
-    return (source || "")
-        .toString()
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9_]/g, "_");
+    return (source || "").toString().trim();
 };
 
 const normalizeUserPayload = (body) => ({
