@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import { Plus, Search, Trash2, Edit2, MoreVertical, Mail, Phone, Filter, Download } from 'lucide-react';
 import AddEmployeeModal from '../components/Employee/AddEmployeeModal';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useConfirm, ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { usePrompt, PromptDialog } from '../components/ui/PromptDialog';
 
 function EmployeesPage() {
   const [users, setUsers] = useState([]);
@@ -15,6 +18,8 @@ function EmployeesPage() {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const filterRef = useRef(null);
   const navigate = useNavigate();
+  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
+  const { prompt, dialogProps: promptDialogProps } = usePrompt();
 
   useEffect(() => {
     // Get Current User Logic
@@ -117,7 +122,8 @@ function EmployeesPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this employee? This action cannot be undone.")) return;
+    const ok = await confirm("Are you sure you want to delete this employee? This action cannot be undone.");
+    if (!ok) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -129,11 +135,11 @@ function EmployeesPage() {
       if (res.ok) {
         setUsers(prev => prev.filter(u => u.id !== id));
       } else {
-        alert("Failed to delete user");
+        toast.error("Failed to delete user");
       }
     } catch (err) {
       console.error(err);
-      alert("Error deleting user");
+      toast.error("Error deleting user");
     }
   };
 
@@ -141,7 +147,8 @@ function EmployeesPage() {
   const handleToggleStatus = async (id, currentStatus) => {
     if (!isAdmin) return;
     const newStatus = (currentStatus === 'ACTIVE') ? 'INACTIVE' : 'ACTIVE';
-    if (!window.confirm(`Set user #${id} status to ${newStatus}?`)) return;
+    const ok = await confirm(`Set user #${id} status to ${newStatus}?`);
+    if (!ok) return;
 
     try {
       const token = localStorage.getItem('token');
@@ -157,21 +164,22 @@ function EmployeesPage() {
         setUsers(prev => prev.map(u => u.id === updated.id ? { ...u, ...updated } : u));
       } else {
         const err = await res.json().catch(() => null);
-        alert(err?.message || 'Failed to update status');
+        toast.error(err?.message || 'Failed to update status');
       }
     } catch (err) {
       console.error('Failed to update status', err);
-      alert('Error updating status');
+      toast.error('Error updating status');
     }
   };
 
   // Admin: mark a user as resigned (archive & delete)
   const handleMarkResigned = async (id) => {
     if (!isAdmin) return;
-    if (!window.confirm(`Mark user #${id} as Resigned and archive their data?`)) return;
+    const ok = await confirm(`Mark user #${id} as Resigned and archive their data?`);
+    if (!ok) return;
 
     try {
-      const reason = prompt('Reason for resignation (optional):');
+      const reason = await prompt('Reason for resignation (optional):', '');
       const token = localStorage.getItem('token');
       const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/users/${id}`, {
         method: 'PUT',
@@ -184,18 +192,19 @@ function EmployeesPage() {
         setUsers(prev => prev.filter(u => u.id !== id));
       } else {
         const err = await res.json().catch(() => null);
-        alert(err?.message || 'Failed to mark resigned');
+        toast.error(err?.message || 'Failed to mark resigned');
       }
     } catch (err) {
       console.error('Failed to mark resigned', err);
-      alert('Error marking resigned');
+      toast.error('Error marking resigned');
     }
   };
 
   // Admin: Reinstate a resigned user
   const handleReinstate = async (id) => {
     if (!isAdmin) return;
-    if (!window.confirm(`Reinstate user #${id} to Active status?`)) return;
+    const ok = await confirm(`Reinstate user #${id} to Active status?`);
+    if (!ok) return;
 
     try {
       const token = localStorage.getItem('token');
@@ -211,11 +220,11 @@ function EmployeesPage() {
         setUsers(prev => prev.map(u => u.id === updated.id ? { ...u, ...updated } : u));
       } else {
         const err = await res.json().catch(() => null);
-        alert(err?.message || 'Failed to reinstate');
+        toast.error(err?.message || 'Failed to reinstate');
       }
     } catch (err) {
       console.error('Failed to reinstate', err);
-      alert('Error reinstating user');
+      toast.error('Error reinstating user');
     }
   };
 
@@ -243,7 +252,7 @@ function EmployeesPage() {
 
   const exportToCSV = (rows) => {
     if (!rows || rows.length === 0) {
-      alert('No data to export');
+      toast.error('No data to export');
       return;
     }
 
@@ -294,11 +303,13 @@ function EmployeesPage() {
 
   return (
     <div className="flex bg-[#f9fafb] dark:bg-slate-800 min-h-screen relative font-inter">
+      <ConfirmDialog {...confirmDialogProps} />
+      <PromptDialog {...promptDialogProps} />
       <div className="w-full transition-all duration-300">
 
         {/* Mobile Header */}
         <div className="lg:hidden bg-white dark:bg-slate-800 p-4 shadow-sm flex items-center justify-between sticky top-0 z-30 border-b border-gray-100 dark:border-slate-700">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">HRMS</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">RedNote PayRoll</h1>
           <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-gray-600 dark:text-slate-400">
             <i className="fas fa-bars text-2xl"></i>
           </button>

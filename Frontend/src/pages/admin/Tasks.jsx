@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { getAllUsers } from '../../services/appreciationService.js';
 import { createTask, getTasks, deleteTask, updateTask } from '../../services/taskService.js';
 import { focusFirstInvalid, handleInvalidCapture } from '../../utils/formValidation.js';
+import toast from 'react-hot-toast';
+import { useConfirm, ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
 const TasksAdmin = () => {
+  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [form, setForm] = useState({ title: '', description: '', assigned_to: '', due_date: '' });
@@ -89,7 +92,7 @@ const TasksAdmin = () => {
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!isAdmin) return alert('Only admins can create tasks');
+    if (!isAdmin) return toast.error('Only admins can create tasks');
     if (focusFirstInvalid(formRef.current)) {
       setError('Title is required');
       return;
@@ -103,11 +106,11 @@ const TasksAdmin = () => {
     } catch (err) {
       console.error('Create task failed', err);
       if (handleAuthError(err)) {
-        alert('Session expired. Please login again.');
+        toast.error('Session expired. Please login again.');
         return;
       }
       const msg = (err && (err.message || err.error)) || err || 'Failed to create task';
-      alert(msg.error || msg);
+      toast.error(msg.error || msg);
     }
   };
 
@@ -115,6 +118,7 @@ const TasksAdmin = () => {
 
   return (
     <div className="p-6">
+      <ConfirmDialog {...confirmDialogProps} />
       <h2 className="text-2xl font-semibold mb-4">Admin: Tasks</h2>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="col-span-1 bg-white p-4 rounded shadow">
@@ -187,8 +191,8 @@ const TasksAdmin = () => {
                               <div className="text-sm text-gray-500">Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : '—'}</div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <button onClick={async () => { try { await updateTask(task.id, { status: 'completed', percent_completed: 100 }); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { alert('Session expired. Please login again.'); return; } if (err && err.message) { alert(err.message); } else { alert('Failed to update task'); } } }} className="px-3 py-1 rounded bg-green-600 text-white text-sm">Certify & Mark done</button>
-                              <button onClick={async () => { if (!confirm('Delete task?')) return; try { await deleteTask(task.id); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { alert('Session expired. Please login again.'); return; } if (err && err.message) { alert(err.message); } else { alert('Failed to delete task'); } } }} className="px-3 py-1 rounded bg-red-100 text-red-600 text-sm">Delete</button>
+                              <button onClick={async () => { try { await updateTask(task.id, { status: 'completed', percent_completed: 100 }); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { toast.error('Session expired. Please login again.'); return; } if (err && err.message) { toast.error(err.message); } else { toast.error('Failed to update task'); } } }} className="px-3 py-1 rounded bg-green-600 text-white text-sm">Certify & Mark done</button>
+                              <button onClick={async () => { const ok = await confirm('Delete task?'); if (!ok) return; try { await deleteTask(task.id); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { toast.error('Session expired. Please login again.'); return; } if (err && err.message) { toast.error(err.message); } else { toast.error('Failed to delete task'); } } }} className="px-3 py-1 rounded bg-red-100 text-red-600 text-sm">Delete</button>
                             </div>
                           </div>
                         ))}
@@ -209,8 +213,8 @@ const TasksAdmin = () => {
                               <div className="text-sm text-gray-500">Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : '—'}</div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <button onClick={async () => { try { await updateTask(task.id, { status: 'completed', percent_completed: 100 }); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { alert('Session expired. Please login again.'); return; } if (err && err.message) { alert(err.message); } else { alert('Failed to update task'); } } }} className="px-3 py-1 rounded bg-green-600 text-white text-sm">Certify & Mark done</button>
-                              <button onClick={async () => { if (!confirm('Delete task?')) return; try { await deleteTask(task.id); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { alert('Session expired. Please login again.'); return; } if (err && err.message) { alert(err.message); } else { alert('Failed to delete task'); } } }} className="px-3 py-1 rounded bg-red-100 text-red-600 text-sm">Delete</button>
+                              <button onClick={async () => { try { await updateTask(task.id, { status: 'completed', percent_completed: 100 }); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { toast.error('Session expired. Please login again.'); return; } if (err && err.message) { toast.error(err.message); } else { toast.error('Failed to update task'); } } }} className="px-3 py-1 rounded bg-green-600 text-white text-sm">Certify & Mark done</button>
+                              <button onClick={async () => { const ok = await confirm('Delete task?'); if (!ok) return; try { await deleteTask(task.id); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { toast.error('Session expired. Please login again.'); return; } if (err && err.message) { toast.error(err.message); } else { toast.error('Failed to delete task'); } } }} className="px-3 py-1 rounded bg-red-100 text-red-600 text-sm">Delete</button>
                             </div>
                           </div>
                         ))}
@@ -232,8 +236,8 @@ const TasksAdmin = () => {
                               {task.certified_by_name && <div className="text-sm text-gray-500">Certified by: {task.certified_by_name}</div>}
                             </div>
                             <div className="flex items-center gap-2">
-                              <button onClick={async () => { if (!confirm('Re-open this task?')) return; try { await updateTask(task.id, { status: 'in_progress', percent_completed: 0, certified_by: null, certified_at: null }); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { alert('Session expired. Please login again.'); return; } if (err && err.message) { alert(err.message); } else { alert('Failed to update task'); } } }} className="px-3 py-1 rounded bg-yellow-100 text-yellow-700 text-sm">Re-open</button>
-                              <button onClick={async () => { if (!confirm('Delete task?')) return; try { await deleteTask(task.id); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { alert('Session expired. Please login again.'); return; } if (err && err.message) { alert(err.message); } else { alert('Failed to delete task'); } } }} className="px-3 py-1 rounded bg-red-100 text-red-600 text-sm">Delete</button>
+                              <button onClick={async () => { const ok = await confirm('Re-open this task?'); if (!ok) return; try { await updateTask(task.id, { status: 'in_progress', percent_completed: 0, certified_by: null, certified_at: null }); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { toast.error('Session expired. Please login again.'); return; } if (err && err.message) { toast.error(err.message); } else { toast.error('Failed to update task'); } } }} className="px-3 py-1 rounded bg-yellow-100 text-yellow-700 text-sm">Re-open</button>
+                              <button onClick={async () => { const ok = await confirm('Delete task?'); if (!ok) return; try { await deleteTask(task.id); await loadTasks(); window.dispatchEvent(new Event('tasks-updated')); } catch (err) { if (handleAuthError(err)) { toast.error('Session expired. Please login again.'); return; } if (err && err.message) { toast.error(err.message); } else { toast.error('Failed to delete task'); } } }} className="px-3 py-1 rounded bg-red-100 text-red-600 text-sm">Delete</button>
                             </div>
                           </div>
                         ))}

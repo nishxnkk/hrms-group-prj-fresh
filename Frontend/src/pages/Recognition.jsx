@@ -3,8 +3,11 @@ import coin from "../assets/coin.png";
 import medal from "../assets/medal.png";
 import trophy from "../assets/trophy.png";
 import { focusField } from "../utils/formValidation";
+import toast from 'react-hot-toast';
+import { usePrompt, PromptDialog } from '../components/ui/PromptDialog';
 
 export default function RecognitionPage() {
+  const { prompt, dialogProps: promptDialogProps } = usePrompt();
   const [selectedSection, setSelectedSection] = useState("recipient");
   const [selectedRecipientId, setSelectedRecipientId] = useState(null);
   const [users, setUsers] = useState([]);
@@ -105,19 +108,19 @@ export default function RecognitionPage() {
 
   const handleSubmit = async () => {
     if (!selectedRecipientId) {
-      alert("Please select a valid recipient from the list");
+      toast.error("Please select a valid recipient from the list");
       setSelectedSection("recipient");
       focusField(recipientSearchRef.current);
       return;
     }
     if (!formData.appreciationType) {
-      alert("Please select a type of appreciation");
+      toast.error("Please select a type of appreciation");
       setSelectedSection("appreciation");
       window.setTimeout(() => focusField(appreciationTypeRef.current), 0);
       return;
     }
     if (!formData.achievement.trim()) {
-      alert("Please describe the specific achievement");
+      toast.error("Please describe the specific achievement");
       setSelectedSection("appreciation");
       window.setTimeout(() => focusField(achievementRef.current), 0);
       return;
@@ -126,7 +129,7 @@ export default function RecognitionPage() {
 
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
     if (loggedInUser && selectedRecipientId === loggedInUser.id) {
-      alert("You cannot appreciate yourself");
+      toast.error("You cannot appreciate yourself");
       return;
     }
     try {
@@ -152,7 +155,7 @@ export default function RecognitionPage() {
       });
 
       if (res.status === 401) {
-        alert("Session expired. Please login again.");
+        toast.error("Session expired. Please login again.");
         localStorage.removeItem("token");
         return;
       }
@@ -162,7 +165,7 @@ export default function RecognitionPage() {
         throw new Error(data.message || "Backend error");
       }
 
-      alert("Appreciation sent successfully");
+      toast.success("Appreciation sent successfully");
 
       // Refresh the data to show the new appreciation and updated leaderboard
       fetchData();
@@ -180,7 +183,7 @@ export default function RecognitionPage() {
 
     } catch (err) {
       console.error("FULL ERROR:", err);
-      alert(err.message || "Something went wrong");
+      toast.error(err.message || "Something went wrong");
     }
   };
 
@@ -467,23 +470,25 @@ export default function RecognitionPage() {
   };
 
   const grantPoints = async (userId) => {
-    const amt = parseInt(prompt('Enter points to grant (positive integer)'), 10);
+    const amtStr = await prompt('Enter points to grant (positive integer)', '');
+    const amt = parseInt(amtStr, 10);
     if (!amt || isNaN(amt)) return;
-    const reason = prompt('Optional reason for points') || '';
+    const reason = await prompt('Optional reason for points', '') || '';
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${base}/api/admin/users/${userId}/points`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' }, body: JSON.stringify({ amount: amt, reason }) });
-      if (!res.ok) { alert('Failed to grant points'); return; }
+      if (!res.ok) { toast.error('Failed to grant points'); return; }
       fetchData();
       window.dispatchEvent(new CustomEvent('activity:updated'));
-      alert('Points granted');
-    } catch (err) { console.error('Grant points failed', err); alert('Failed to grant points'); }
+      toast.success('Points granted');
+    } catch (err) { console.error('Grant points failed', err); toast.error('Failed to grant points'); }
   };
 
 
 
   return (
     <div>
+      <PromptDialog {...promptDialogProps} />
       <div className="p-6">
         {/* MAIN GRID */}
         <div className="grid grid-cols-[340px_1fr] gap-8">

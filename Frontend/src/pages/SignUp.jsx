@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { focusField, focusFirstInvalid, handleInvalidCapture } from "../utils/formValidation";
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -60,7 +61,7 @@ const SignUp = () => {
     if (focusFirstInvalid(formRef.current)) return;
     const isValid = validate();
     if (!robot || !robot.checked) {
-      alert("Please confirm you are not a robot.");
+      toast.error("Please confirm you are not a robot.");
       focusField(fieldRefs.robot.current);
       return;
     }
@@ -114,7 +115,7 @@ const SignUp = () => {
 
         if (response.ok) {
           // Success - status 201
-          alert("✅ Account created successfully!");
+          toast.success("Account created successfully!");
 
           // Auto-login logic
           localStorage.setItem("token", data.token);
@@ -135,18 +136,18 @@ const SignUp = () => {
           if (response.status === 400 && data.message === "User already exists") {
             // Duplicate email
             setErrors({ ...errors, email: "This email is already registered. Please use a different email or log in." });
-            alert("❌ This email is already registered!");
+            toast.error("This email is already registered!");
           } else if (response.status === 400 && data.message === "Username already exists") {
             setErrors({ ...errors, username: "This username is already taken. Please choose another one." });
-            alert("Username already taken. Please choose another one.");
+            toast.error("Username already taken. Please choose another one.");
           } else {
             // Other errors
-            alert(`❌ Error: ${data.message || "Failed to create account"}`);
+            toast.error(data.message || "Failed to create account");
           }
         }
       } catch (error) {
         console.error("Signup error:", error);
-        alert("❌ Network error. Please check if the backend server is running.");
+        toast.error("Network error. Please check if the backend server is running.");
       }
     }
   };

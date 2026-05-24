@@ -3,8 +3,11 @@ import * as employeeOfMonthService from '../../services/employeeOfMonthService';
 import { Calendar, Clock, Trophy, Users, Plus, X, Trash2, Award, ChevronRight, ArrowLeft } from 'lucide-react';
 import { getAllEvents } from '../../services/event.service';
 import { Link, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast';
+import { useConfirm, ConfirmDialog } from '../ui/ConfirmDialog';
 
 const FeedPage3 = ({ onNavigateBack }) => {
+    const { confirm, dialogProps: confirmDialogProps } = useConfirm();
     const [employeeData, setEmployeeData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -187,36 +190,37 @@ const FeedPage3 = ({ onNavigateBack }) => {
             fetchEmployeeOfMonth();
         } catch (error) {
             console.error('Error creating employee of the month:', error);
-            alert('Failed to create employee of the month');
+            toast.error('Failed to create employee of the month');
         }
     };
 
     const handleDeleteTeamMember = async (teamMemberId) => {
-        if (window.confirm('Are you sure you want to remove this team member?')) {
-            try {
-                await employeeOfMonthService.deleteTeamMember(teamMemberId);
-                fetchEmployeeOfMonth();
-            } catch (error) {
-                console.error('Error deleting team member:', error);
-                alert('Failed to delete team member');
-            }
+        const ok = await confirm('Are you sure you want to remove this team member?');
+        if (!ok) return;
+        try {
+            await employeeOfMonthService.deleteTeamMember(teamMemberId);
+            fetchEmployeeOfMonth();
+        } catch (error) {
+            console.error('Error deleting team member:', error);
+            toast.error('Failed to delete team member');
         }
     };
 
     const handleDeleteEmployeeOfMonth = async () => {
-        if (window.confirm('Are you sure you want to delete the Employee of the Month? This will remove the entire entry and team.')) {
-            try {
-                await employeeOfMonthService.deleteEmployeeOfMonth(employeeData.id);
-                setEmployeeData(null);
-            } catch (error) {
-                console.error('Error deleting employee of the month:', error);
-                alert('Failed to delete employee of the month');
-            }
+        const ok = await confirm('Are you sure you want to delete the Employee of the Month? This will remove the entire entry and team.');
+        if (!ok) return;
+        try {
+            await employeeOfMonthService.deleteEmployeeOfMonth(employeeData.id);
+            setEmployeeData(null);
+        } catch (error) {
+            console.error('Error deleting employee of the month:', error);
+            toast.error('Failed to delete employee of the month');
         }
     };
 
     return (
         <div className="p-6 dark:bg-[#0C1014] sm:p-10 max-w-[1600px] mx-auto min-h-screen">
+            <ConfirmDialog {...confirmDialogProps} />
             {/* Header */}
             <div className="flex items-center justify-between mb-10">
                 <div className="flex items-center gap-4">

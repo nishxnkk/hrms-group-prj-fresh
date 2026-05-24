@@ -11,9 +11,12 @@ import {
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { getAllEvents } from '../../services/event.service';
+import toast from 'react-hot-toast';
+import { useConfirm, ConfirmDialog } from '../ui/ConfirmDialog';
 
 const FeedPage1 = ({ onNavigateBack }) => {
     // State for the "Give Points" interaction
+    const { confirm, dialogProps: confirmDialogProps } = useConfirm();
     const [showGivePointsModal, setShowGivePointsModal] = useState(false);
     const [users, setUsers] = useState([]);
     const [appreciations, setAppreciations] = useState([]);
@@ -139,14 +142,15 @@ const FeedPage1 = ({ onNavigateBack }) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this appreciation?")) return;
+        const ok = await confirm("Are you sure you want to delete this appreciation?");
+        if (!ok) return;
         try {
             await deleteAppreciation(id);
             fetchFeed(); // Refresh to remove deleted item
             try { window.dispatchEvent(new CustomEvent('activity:updated')); } catch (e) { }
         } catch (error) {
             console.error("Failed to delete appreciation", error);
-            alert("Failed to delete. You might not have permission.");
+            toast.error("Failed to delete. You might not have permission.");
         }
     };
 
@@ -156,18 +160,18 @@ const FeedPage1 = ({ onNavigateBack }) => {
                 // Relaxed validation: points can be 0 if it's just an appreciation, but frontend "Give Points" implies points.
                 // If the user wants just "Appreciation", we might need a separate mode. For now, enforcing points.
                 if (!givePointsData.points) {
-                    alert("Please enter points amount.");
+                    toast.error("Please enter points amount.");
                     return;
                 }
             }
 
             // Check balance (admins can send unlimited points)
             if (parseInt(givePointsData.points, 10) <= 0) {
-                alert('Please enter a positive points amount');
+                toast.error('Please enter a positive points amount');
                 return;
             }
             if (!isAdmin && parseInt(givePointsData.points, 10) > userPoints) {
-                alert('Insufficient points to send');
+                toast.error('Insufficient points to send');
                 return;
             }
 
@@ -189,7 +193,7 @@ const FeedPage1 = ({ onNavigateBack }) => {
                 localStorage.setItem('user', JSON.stringify({ ...localUser, points: newPoints }));
             }
 
-            alert(`Successfully sent ${givePointsData.points} points!`);
+            toast.success(`Successfully sent ${givePointsData.points} points!`);
             setShowGivePointsModal(false);
             setGivePointsData({
                 recipient_id: '',
@@ -208,12 +212,13 @@ const FeedPage1 = ({ onNavigateBack }) => {
             try { window.dispatchEvent(new CustomEvent('activity:updated')); } catch (e) { }
         } catch (error) {
             console.error(error);
-            alert('Failed to send points: ' + (error.message || JSON.stringify(error)));
+            toast.error('Failed to send points: ' + (error.message || JSON.stringify(error)));
         }
     };
 
     return (
         <div className="p-4 sm:p-8 dark:bg-[#0C1014] min-h-screen transition-colors duration-200">
+            <ConfirmDialog {...confirmDialogProps} />
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -589,7 +594,7 @@ const CommentSection = ({ appreciation }) => {
             fetchComments(); // Refresh comments
         } catch (error) {
             console.error("Failed to post comment", error);
-            alert("Failed to post comment");
+            toast.error("Failed to post comment");
         }
     };
 

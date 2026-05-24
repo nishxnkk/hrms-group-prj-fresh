@@ -7,8 +7,11 @@ import Skeleton from "../../components/ui/Skeleton";
 import EmptyState from "../../components/ui/EmptyState";
 import { Fragment } from "react";
 import { focusFirstInvalid, handleInvalidCapture } from "../../utils/formValidation";
+import toast from 'react-hot-toast';
+import { useConfirm, ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
 export default function Jobs() {
+  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
   const [jobs, setJobs] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [form, setForm] = useState({
@@ -106,27 +109,23 @@ export default function Jobs() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       closeApply();
-      alert('Application submitted');
+      toast.success('Application submitted');
     } catch (err) {
       console.error(err);
-      alert('Failed to submit application');
+      toast.error('Failed to submit application');
     }
   };
 
   // ✅ DELETE JOB
   const deleteJob = async (id) => {
     if (!isAdmin) return;
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this job?"
-    );
-
-    if (!confirmDelete) return;
-
+    const ok = await confirm("Are you sure you want to delete this job?");
+    if (!ok) return;
     try {
       await axios.delete(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/jobs/${id}`);
       fetchJobs();
     } catch (err) {
-      alert("Failed to delete job");
+      toast.error("Failed to delete job");
     }
   };
 

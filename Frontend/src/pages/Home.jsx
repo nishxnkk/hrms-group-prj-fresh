@@ -67,17 +67,16 @@ const Home = () => {
       <section className="flex md:flex-row justify-around flex-col gap-5">
         <div className="md:max-w-[45%] flex flex-col gap-5 text-[18px]">
           <div className="text-center pb-4 max-w-">
-            <p className="text-3xl font-bold text-[#783625]">HRMS</p>
-            <p>(Human Resource Management System)</p>
+            <p className="text-3xl font-bold text-[#783625]">RedNote PayRoll</p>
           </div>
           <div className="text-center pb-8">
             <p className="text-3xl font-bold text-[#783625]">About</p>
             <p>
-              Our Human Resource Management System (HRMS) streamlines how
+              Our RedNote PayRoll system streamlines how
               organizations manage employees and teams. It integrates essential
               functions such as employee profiles, event planning, and internal
               communication, all within a single platform. With an intuitive
-              interface and a well-organized layout, the HRMS enhances
+              interface and a well-organized layout, RedNote PayRoll enhances
               productivity and fosters transparency across the board. Its
               primary aim is to make HR tasks more efficient, faster, and
               dependable for everyone using it.
@@ -86,7 +85,7 @@ const Home = () => {
           <div className="text-center">
             <p className="text-3xl font-bold text-[#783625]">Features</p>
             <p>
-              Our HRMS platform offers a comprehensive set of tools that make
+              Our RedNote PayRoll platform offers a comprehensive set of tools that make
               human resource management simpler and more effective. It covers
               everything from maintaining employee profiles to coordinating
               internal events, with every feature crafted for ease of use and
@@ -101,7 +100,7 @@ const Home = () => {
           <div className="bg-[#8EA4D0]  rounded-2xl max-w-full cursor-pointer">
             <img src="image 5.svg" alt="" className="p-6 w-full" />
           </div>
-          < p className="text-center text-[20px]">Access our integrated HRMS tools through the download button</p>
+          < p className="text-center text-[20px]">Access our integrated RedNote PayRoll tools through the download button</p>
           <div className="flex md:flex-row md:justify-around gap-1 flex-col justify-center">
             <button className="text-blue-600 cursor-pointer bg-[#D9D9D9] h-auto max-w-[200px] mx-auto px-2 md:my-9 my-4 rounded-2xl
             focus:outline-none hover:text-black ">Click For Download</button>

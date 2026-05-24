@@ -1,9 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { getAllEvents, createEvent as createEventAPI, registerForEvent, deleteEvent as deleteEventAPI, getUserEvents } from '../services/event.service';
 import { focusFirstInvalid, handleInvalidCapture } from '../utils/formValidation';
+import toast from 'react-hot-toast';
+import { useConfirm, ConfirmDialog } from '../components/ui/ConfirmDialog';
 
 const ProfessionalEventsPage = () => {
   // --- 1. STATE DEFINITIONS (Moved INSIDE the component) ---
+  const { confirm, dialogProps: confirmDialogProps } = useConfirm();
   const [activeTab, setActiveTab] = useState('all');
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
@@ -122,7 +125,7 @@ const ProfessionalEventsPage = () => {
     if (!selectedEvent) return;
 
     if (isEventJoined(selectedEvent.id)) {
-      alert('You are already registered for this event');
+      toast.error('You are already registered for this event');
       setShowJoinModal(false);
       return;
     }
@@ -134,13 +137,13 @@ const ProfessionalEventsPage = () => {
         try { localStorage.setItem('joinedEvents', JSON.stringify(next)); } catch (e) { }
         return next;
       });
-      alert(`Successfully registered for: ${selectedEvent.title}\n\nWe've sent confirmation to ${joinForm.email}`);
+      toast.success(`Successfully registered for: ${selectedEvent.title}`);
       setShowJoinModal(false);
       setJoinForm({ name: '', email: '', company: '', position: '' });
       fetchEvents();
       try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
     } catch (error) {
-      alert(`Failed to register: ${error.message}`);
+      toast.error(`Failed to register: ${error.message}`);
     }
   };
 
@@ -177,11 +180,11 @@ const ProfessionalEventsPage = () => {
         max_attendees: 100
       });
       setShowCreateEventModal(false);
-      alert('Event created successfully!');
+      toast.success('Event created successfully!');
       fetchEvents();
       try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
     } catch (error) {
-      alert(`Failed to create event: ${error.message}`);
+      toast.error(`Failed to create event: ${error.message}`);
     }
   };
 
@@ -194,15 +197,15 @@ const ProfessionalEventsPage = () => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    if (window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
-      try {
-        await deleteEventAPI(eventId);
-        alert('Event deleted successfully');
-        fetchEvents();
-        try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
-      } catch (error) {
-        alert(`Failed to delete event: ${error.message}`);
-      }
+    const ok = await confirm('Are you sure you want to delete this event? This action cannot be undone.');
+    if (!ok) return;
+    try {
+      await deleteEventAPI(eventId);
+      toast.success('Event deleted successfully');
+      fetchEvents();
+      try { window.dispatchEvent(new CustomEvent('events:updated')); } catch (e) { }
+    } catch (error) {
+      toast.error(`Failed to delete event: ${error.message}`);
     }
   };
 
@@ -221,6 +224,7 @@ const ProfessionalEventsPage = () => {
   // --- 5. RENDER ---
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-800">
+      <ConfirmDialog {...confirmDialogProps} />
 
       {/* Join Event Modal (Added Blur here too for consistency) */}
       {showJoinModal && selectedEvent && (
