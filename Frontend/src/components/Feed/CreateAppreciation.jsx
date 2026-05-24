@@ -3,7 +3,7 @@ import { createAppreciation } from '../../services/appreciationService';
 import axios from 'axios';
 import { focusFirstInvalid, handleInvalidCapture } from '../../utils/formValidation';
 
-const CreateAppreciation = ({ onNavigateBack, onSuccess }) => {
+const CreateAppreciation = ({ onNavigateBack, onSuccess, externalFormRef }) => {
     const [formData, setFormData] = useState({
         recipient_id: '',
         title: '',
@@ -113,7 +113,7 @@ const CreateAppreciation = ({ onNavigateBack, onSuccess }) => {
 
                 {/* Form */}
                 <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-2xl shadow-md p-8 border border-gray-100">
-                    <form ref={formRef} onInvalidCapture={handleInvalidCapture} onSubmit={handleSubmit} className="space-y-6">
+                    <form ref={externalFormRef || formRef} onInvalidCapture={handleInvalidCapture} onSubmit={handleSubmit} className="space-y-6">
                         {/* Error/Success Messages */}
                         {error && (
                             <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">

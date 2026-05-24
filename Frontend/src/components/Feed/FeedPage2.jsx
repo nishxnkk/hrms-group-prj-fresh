@@ -282,9 +282,6 @@ const FeedPage2 = ({ onNavigateToPage2, onNavigateToPage3, onNavigateToCreateFor
                                     <Link to="/promotion">Promotions</Link>
                                 </button>
                             </div>
-                            <div>
-                                <Link to="/appreciation/new" className="ml-4 inline-block bg-[#266ECD] text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90">New Appreciation</Link>
-                            </div>
                         </div>
 
                         {/* Loading State */}
