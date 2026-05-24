@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react'
 import './App.css'
 
 import { Routes, Route, Navigate } from 'react-router-dom'
@@ -48,7 +49,7 @@ import RedemptionPage from './pages/Redeem'
 
 
 
-import { useEffect } from 'react';
+
 import { initPresence } from './utils/presence';
 
 function App() {
