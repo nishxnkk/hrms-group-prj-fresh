@@ -9,9 +9,11 @@ import applicationRoutes from "./routes/application.routes.js";
 import interviewRoutes from "./routes/interview.routes.js";
 import offerRoutes from "./routes/offer.routes.js";
 import payrollRoutes from "./routes/payroll.routes.js";
+import hrModuleRoutes from "./routes/hrModule.routes.js";
 import { initDb } from "./db/initDb.js";
 import { createUserTable } from "./models/user.model.js";
 import { createPayrollTable } from "./models/payroll.model.js";
+import { createHrModuleTable } from "./models/hrModule.model.js";
 import meetingRoutes from "./routes/meeting.routes.js";
 import eventRoutes from "./routes/event.routes.js";
 const app = express();
@@ -49,6 +51,7 @@ app.use(express.urlencoded({ extended: true }));
 initDb();
 createUserTable()
   .then(() => createPayrollTable())
+  .then(() => createHrModuleTable())
   .catch((err) => console.error("Payroll init error", err));
 
 app.use("/api/lms", lmsRoutes);
@@ -65,6 +68,7 @@ app.use("/api", applicationRoutes);
 app.use("/api/interviews", interviewRoutes);
 app.use("/api/offers", offerRoutes);
 app.use("/api/payroll", payrollRoutes);
+app.use("/api/hr-modules", hrModuleRoutes);
 app.use("/api/meetings", meetingRoutes);
 app.use("/api/events", eventRoutes);
 

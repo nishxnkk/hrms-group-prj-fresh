@@ -19,6 +19,7 @@ import { createJobsTable } from "./models/job.model.js";
 import { createApplicationsTable } from "./models/application.model.js";
 import { createOffersTable } from "./models/offer.model.js";
 import { createPayrollTable } from "./models/payroll.model.js";
+import { createHrModuleTable } from "./models/hrModule.model.js";
 import { createInterviewsTable } from "./models/interview.model.js";
 import { createEventTable } from "./models/event.model.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
@@ -437,6 +438,7 @@ const initDb = async () => {
     await createInterviewsTable();
     await createOffersTable();
     await createPayrollTable();
+    await createHrModuleTable();
     await createMessagesTable();
     await createMeetingTable();
     await createTasksTable();

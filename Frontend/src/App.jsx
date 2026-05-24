@@ -17,6 +17,7 @@ import Profile from './pages/profile/Profile'
 import ProfileView from './components/Profile/ProfileView'
 import Promotion from './pages/Promotion'
 import Payroll from './pages/Payroll'
+import HRModules from './pages/HRModules'
 import Redemption from './pages/Redemption'
 import AppreciationPage from './pages/Appreciation'
 import CreateAppreciation from './pages/CreateAppreciation'
@@ -79,6 +80,7 @@ function App() {
           <Route path="/feed" element={<ProtectedRoute><Layout><Feed /></Layout></ProtectedRoute>} />
           <Route path="/promotion" element={<ProtectedRoute><Layout><Promotion /></Layout></ProtectedRoute>} />
           <Route path="/payroll" element={<ProtectedRoute><Layout><Payroll /></Layout></ProtectedRoute>} />
+          <Route path="/hr-modules" element={<ProtectedRoute><Layout><HRModules /></Layout></ProtectedRoute>} />
           <Route path="/redemption" element={<ProtectedRoute><Layout><RedemptionPage /></Layout></ProtectedRoute>} />
           <Route path='/employees' element={<ProtectedRoute><Layout><EmployeesPage /></Layout></ProtectedRoute>} />
           <Route path='/archived-users' element={<ProtectedRoute><Layout><ArchivedUsers /></Layout></ProtectedRoute>} />

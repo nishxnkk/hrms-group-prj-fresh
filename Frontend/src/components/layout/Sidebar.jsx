@@ -36,6 +36,7 @@ function Sidebar() {
     { name: "Recognition", path: "/recognition" },
     { name: "Event", path: "/event" },
     { name: "Payroll", path: "/payroll" },
+    { name: "HR Modules", path: "/hr-modules" },
     { name: "Recruitment", path: "/recruitment" },
     { name: "Profile", path: "/profile" },
     { name: "Settings", path: "/settings" },
@@ -120,7 +121,7 @@ function Sidebar() {
 
       <ul className="app-nav flex flex-col gap-2">
         {menuItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(`${item.path}/`));
           return (
             <li key={item.name}>
               <Link
